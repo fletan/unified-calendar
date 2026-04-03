@@ -1,0 +1,30 @@
+{
+    "name": "@unified-calendar/web",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "clean:cache": "rm -rf .turbo",
+        "clean:artifacts": "rm -rf .next coverage .turbo tsconfig.tsbuildinfo",
+        "clean": "pnpm run clean:artifacts",
+        "start": "next start",
+        "lint": "biome check src next.config.mjs",
+        "typecheck": "tsc --noEmit",
+        "test": "vitest run",
+        "test:coverage": "vitest run --coverage"
+    },
+    "dependencies": {
+        "next": "15.0.4",
+        "react": "19.0.0",
+        "react-dom": "19.0.0"
+    },
+    "devDependencies": {
+        "@vitest/coverage-v8": "^2.1.8",
+        "@types/node": "^22.10.1",
+        "@types/react": "^19.0.1",
+        "@types/react-dom": "^19.0.1",
+        "typescript": "^5.7.2",
+        "vitest": "^2.1.8"
+    }
+}

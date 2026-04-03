@@ -1,0 +1,22 @@
+{
+    "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+    "files": {
+        "ignore": [
+            "**/node_modules/**",
+            "**/.next/**",
+            "**/.turbo/**",
+            "**/coverage/**",
+            "**/dist/**"
+        ]
+    },
+    "formatter": {
+        "enabled": true,
+        "indentStyle": "space"
+    },
+    "linter": {
+        "enabled": true,
+        "rules": {
+            "recommended": true
+        }
+    }
+}

@@ -1,0 +1,23 @@
+{
+    "name": "@unified-calendar/config-typescript",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "build": "rm -rf dist && mkdir -p dist && cp base.json nextjs.json dist/",
+        "clean:artifacts": "rm -rf dist .turbo",
+        "clean": "pnpm run clean:artifacts",
+        "clean:cache": "rm -rf .turbo",
+        "lint": "biome check package.json base.json nextjs.json",
+        "typecheck": "echo \"No typecheck needed for @unified-calendar/config-typescript\"",
+        "test": "echo \"No tests needed for @unified-calendar/config-typescript\"",
+        "test:coverage": "echo \"No coverage needed for @unified-calendar/config-typescript\""
+    },
+    "files": [
+        "base.json",
+        "nextjs.json"
+    ],
+    "exports": {
+        "./base.json": "./base.json",
+        "./nextjs.json": "./nextjs.json"
+    }
+}
