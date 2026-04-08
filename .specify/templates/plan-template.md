@@ -29,9 +29,20 @@
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
-[Gates determined based on constitution file]
+- **Spec-Driven Delivery**: Plan references approved `spec.md` user stories,
+  acceptance scenarios, and measurable outcomes.
+- **Testable Increments**: Story slices are independently implementable and
+  independently verifiable; required test approach is defined.
+- **Coverage Gate**: Plan defines how 100% unit test coverage is measured and
+  enforced for frontend, backend, and shared code.
+- **Security and Privacy**: Data sensitivity, secret handling, and misuse/threat
+  considerations are documented for impacted flows.
+- **Observability and Operability**: Monitoring signals, diagnostics, and failure
+  handling paths are documented for production-relevant behavior.
+- **Simplicity and Compatibility**: Breaking changes and migration strategy are
+  called out; simpler alternatives considered and recorded when rejected.
 
 ## Project Structure
 
@@ -48,6 +59,7 @@ specs/[###-feature]/
 ```
 
 ### Source Code (repository root)
+
 <!--
   ACTION REQUIRED: Replace the placeholder tree below with the concrete layout
   for this feature. Delete unused options and expand the chosen structure with
@@ -98,7 +110,7 @@ directories captured above]
 
 > **Fill ONLY if Constitution Check has violations that must be justified**
 
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
+| Violation                  | Why Needed         | Simpler Alternative Rejected Because |
+| -------------------------- | ------------------ | ------------------------------------ |
+| [e.g., 4th project]        | [current need]     | [why 3 projects insufficient]        |
+| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient]  |
