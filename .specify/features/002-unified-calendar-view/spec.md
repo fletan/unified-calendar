@@ -82,11 +82,11 @@ then verifying the corresponding events disappear and reappear in the same unifi
 
 ### Edge Cases
 
-- What happens when authentication succeeds for one provider but fails for another?
+- Partial auth failure (one provider succeeds, one fails): persist the successful connection, show an inline error with a retry action for the failed provider; do not roll back the successful connection.
 - Expired tokens: silent background refresh attempted first; re-auth prompt shown only on refresh failure. Revoked credentials surface as refresh failure and trigger re-auth prompt.
 - Duplicate/near-duplicate events: both are shown independently with their provider source labels. No deduplication logic in MVP; cross-provider identity matching is explicitly out of scope.
-- What happens when a connected provider is temporarily unavailable during refresh?
-- How does the system behave when no calendars are connected yet?
+- Provider temporarily unavailable during refresh: display stale cached events for that provider alongside a provider-specific warning banner; other providers continue to display normally.
+- Empty state (no calendars connected): display an onboarding prompt with "Connect Google" and "Connect Microsoft" action buttons; no blank calendar grid shown.
 
 ## Requirements _(mandatory)_
 
@@ -99,6 +99,9 @@ then verifying the corresponding events disappear and reappear in the same unifi
 - **FR-003**: System MUST retrieve and display events from all connected calendars in
   one unified calendar view. The default view on open MUST be a week view (7-day grid,
   time-slotted); other view modes (day, month, agenda) MAY be offered but are not required for MVP.
+- **FR-017**: System MUST fetch events covering a window of 1 month in the past through
+  3 months in the future as a single batch per provider on session load, to minimize API
+  quota usage and enable smooth navigation without additional requests.
 - **FR-004**: System MUST include source metadata per event so users can identify which
   provider/calendar each event originates from.
 - **FR-005**: System MUST provide per-calendar visibility controls without disconnecting
@@ -106,19 +109,28 @@ then verifying the corresponding events disappear and reappear in the same unifi
 - **FR-006**: System MUST operate as read-only in MVP and MUST NOT create, edit, or
   delete events on provider calendars.
 - **FR-007**: System MUST handle partial provider failures by continuing to display data
-  from other connected providers.
+  from other connected providers. When a provider is temporarily unavailable during
+  refresh, the system MUST display the last successfully cached events for that provider
+  alongside a provider-specific warning banner indicating stale data.
 - **FR-016**: When a provider OAuth token expires mid-session, the system MUST attempt a
   silent background token refresh without interrupting the user. A re-authentication prompt
   MUST only be shown if the silent refresh itself fails.
 - **FR-008**: System MUST provide user-visible states for no data, loading, and provider
-  authentication/connection errors.
+  authentication/connection errors. When no calendars are connected, the system MUST
+  display an onboarding prompt with "Connect Google" and "Connect Microsoft" action buttons
+  instead of an empty calendar grid. When one provider authentication fails while another
+  succeeds, the system MUST persist the successful connection and display an inline error
+  with a retry action for the failed provider.
 - **FR-009**: System MUST persist connection state securely so users can return without
   reconnecting unless credentials are invalid. OAuth tokens MUST be stored in HttpOnly
   cookies (set by the backend) to prevent XSS exposure; tokens MUST NOT be stored in
   localStorage or accessible JavaScript.
 - **FR-010**: System MUST define story-level testability criteria for each user story.
 - **FR-011**: System MUST document security/privacy constraints for sensitive data handling.
-- **FR-012**: System MUST define required observability signals for critical flows.
+- **FR-012**: System MUST instrument the following observability signals for critical flows:
+  (1) Auth events — success/failure per provider with error type;
+  (2) Calendar load latency — time from request to rendered events per session load;
+  (3) Provider error rates — count of failed fetches and token refresh failures per provider.
 - **FR-013**: System MUST identify any breaking change and define migration expectations.
 - **FR-014**: System MUST maintain 100% unit test coverage for all production code,
   including frontend, backend, and shared modules.
@@ -147,7 +159,8 @@ _No critical clarification markers are required for this MVP specification._
 - **SC-002**: 100% of connected calendars selected as visible are represented in the
   unified view during normal provider availability.
 - **SC-003**: 95% of unified calendar loads complete in under 5 seconds for an account
-  with up to 500 upcoming events across connected calendars.
+  with up to 500 events across the full fetch window (1 month past + 3 months future)
+  across all connected calendars.
 - **SC-004**: In provider outage simulations for one source, the unified calendar
   continues to render events from remaining sources in 100% of test runs.
 - **SC-005**: Unit test coverage remains at 100% for frontend, backend, and shared
@@ -155,8 +168,13 @@ _No critical clarification markers are required for this MVP specification._
 
 ## Clarifications
 
-### Session 2026-04-16
+### Session 2026-04-16 (part 2)
 
+- Q: What time window of events should the unified calendar fetch from providers? → A: Past 1 month + next 3 months (single batch fetch per session load)
+- Q: What should the app show when the user opens it with no calendars connected yet? → A: Onboarding prompt with "Connect Google" and "Connect Microsoft" action buttons
+- Q: What should happen when a provider is temporarily unavailable during an event refresh? → A: Show stale cached data with a provider-specific warning banner
+- Q: What should happen when authentication succeeds for one provider but fails for the other during initial connect? → A: Proceed with successful provider; show inline error with retry action for the failed one
+- Q: Which observability signals are required for critical flows (FR-012)? → A: Auth events + calendar load latency + provider error rates
 - Q: What is the target platform and UI rendering context for this calendar? → A: Web app (browser-based)
 - Q: What default calendar view should be shown when the user opens the unified calendar? → A: Week view (7-day grid, time-slotted)
 - Q: How should OAuth tokens be stored between sessions to keep users authenticated? → A: HttpOnly cookie (XSS-safe, backend-set)
