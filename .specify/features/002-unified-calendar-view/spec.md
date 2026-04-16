@@ -83,9 +83,8 @@ then verifying the corresponding events disappear and reappear in the same unifi
 ### Edge Cases
 
 - What happens when authentication succeeds for one provider but fails for another?
-- How does the system handle expired or revoked provider credentials?
-- How are duplicate or near-duplicate events handled when multiple sources contain
-  similar meeting entries?
+- Expired tokens: silent background refresh attempted first; re-auth prompt shown only on refresh failure. Revoked credentials surface as refresh failure and trigger re-auth prompt.
+- Duplicate/near-duplicate events: both are shown independently with their provider source labels. No deduplication logic in MVP; cross-provider identity matching is explicitly out of scope.
 - What happens when a connected provider is temporarily unavailable during refresh?
 - How does the system behave when no calendars are connected yet?
 
@@ -94,11 +93,12 @@ then verifying the corresponding events disappear and reappear in the same unifi
 ### Functional Requirements
 
 - **FR-001**: System MUST support authentication for at least Google and Microsoft
-  calendar providers in the MVP.
+  calendar providers in the MVP via browser-based OAuth redirect flows (web app target).
 - **FR-002**: System MUST allow multiple provider accounts to remain connected at the
   same time for a single user.
 - **FR-003**: System MUST retrieve and display events from all connected calendars in
-  one unified calendar view.
+  one unified calendar view. The default view on open MUST be a week view (7-day grid,
+  time-slotted); other view modes (day, month, agenda) MAY be offered but are not required for MVP.
 - **FR-004**: System MUST include source metadata per event so users can identify which
   provider/calendar each event originates from.
 - **FR-005**: System MUST provide per-calendar visibility controls without disconnecting
@@ -107,10 +107,15 @@ then verifying the corresponding events disappear and reappear in the same unifi
   delete events on provider calendars.
 - **FR-007**: System MUST handle partial provider failures by continuing to display data
   from other connected providers.
+- **FR-016**: When a provider OAuth token expires mid-session, the system MUST attempt a
+  silent background token refresh without interrupting the user. A re-authentication prompt
+  MUST only be shown if the silent refresh itself fails.
 - **FR-008**: System MUST provide user-visible states for no data, loading, and provider
   authentication/connection errors.
 - **FR-009**: System MUST persist connection state securely so users can return without
-  reconnecting unless credentials are invalid.
+  reconnecting unless credentials are invalid. OAuth tokens MUST be stored in HttpOnly
+  cookies (set by the backend) to prevent XSS exposure; tokens MUST NOT be stored in
+  localStorage or accessible JavaScript.
 - **FR-010**: System MUST define story-level testability criteria for each user story.
 - **FR-011**: System MUST document security/privacy constraints for sensitive data handling.
 - **FR-012**: System MUST define required observability signals for critical flows.
@@ -148,6 +153,16 @@ _No critical clarification markers are required for this MVP specification._
 - **SC-005**: Unit test coverage remains at 100% for frontend, backend, and shared
   code in CI.
 
+## Clarifications
+
+### Session 2026-04-16
+
+- Q: What is the target platform and UI rendering context for this calendar? → A: Web app (browser-based)
+- Q: What default calendar view should be shown when the user opens the unified calendar? → A: Week view (7-day grid, time-slotted)
+- Q: How should OAuth tokens be stored between sessions to keep users authenticated? → A: HttpOnly cookie (XSS-safe, backend-set)
+- Q: When a provider token expires mid-session, how should the app respond? → A: Silent background refresh; prompt re-auth only on refresh failure
+- Q: How should duplicate or near-duplicate events be handled when the same meeting appears in both providers? → A: Show both events independently with source labels (no deduplication in MVP)
+
 ## Assumptions
 
 - Primary users are individuals managing at least two calendars from different providers.
@@ -158,6 +173,7 @@ _No critical clarification markers are required for this MVP specification._
 - Users have network connectivity when authenticating and when refreshing provider data.
 - Time zone data from providers is accurate enough for unified rendering without manual
   correction in MVP.
+- Target platform is a browser-based web application; OAuth redirect flows assume a web context.
 
 ## Constitution Alignment Checklist _(mandatory)_
 
