@@ -35,9 +35,11 @@ Microsoft account and verifying both connections are active and reusable in a la
 
 1. **Given** I am not connected to any provider, **When** I authenticate with Google,
    **Then** my Google calendar connection is saved as active.
-2. **Given** I am already connected to Google, **When** I authenticate with Microsoft,
+2. **Given** I am not connected to any provider, **When** I authenticate with Microsoft,
+   **Then** my Microsoft calendar connection is saved as active.
+3. **Given** I am already connected to Google, **When** I authenticate with Microsoft,
    **Then** both provider connections are active at the same time.
-3. **Given** a prior valid connection exists, **When** I return to the app,
+4. **Given** a prior valid connection exists, **When** I return to the app,
    **Then** I am not forced to re-authenticate unless the provider token is expired or revoked.
 
 ---
