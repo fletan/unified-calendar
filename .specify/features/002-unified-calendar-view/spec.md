@@ -126,7 +126,12 @@ then verifying the corresponding events disappear and reappear in the same unifi
   cookies (set by the backend) to prevent XSS exposure; tokens MUST NOT be stored in
   localStorage or accessible JavaScript.
 - **FR-010**: System MUST define story-level testability criteria for each user story.
-- **FR-011**: System MUST document security/privacy constraints for sensitive data handling.
+- **FR-011**: System MUST enforce the following security/privacy constraints for sensitive
+  data: (1) OAuth tokens MUST be stored in HttpOnly cookies only (never in localStorage or
+  JS-accessible storage); (2) Cached event metadata (titles, times, attendees) MUST be
+  scoped to the authenticated user and MUST NOT be accessible across user sessions;
+  (3) Event descriptions and attachments MUST NOT be cached server-side in MVP;
+  (4) No sensitive data MUST be logged in plaintext in observability signals.
 - **FR-012**: System MUST instrument the following observability signals for critical flows:
   (1) Auth events — success/failure per provider with error type;
   (2) Calendar load latency — time from request to rendered events per session load;
@@ -167,6 +172,10 @@ _No critical clarification markers are required for this MVP specification._
   code in CI.
 
 ## Clarifications
+
+### Session 2026-04-16 (part 3)
+
+- Q: What sensitive data does this app handle that requires explicit security/privacy constraints (FR-011)? → A: OAuth tokens + event metadata cached server-side (titles, times, attendees)
 
 ### Session 2026-04-16 (part 2)
 
