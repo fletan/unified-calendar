@@ -1,32 +1,38 @@
+import type { UnifiedEvent } from "@unified-calendar/domain";
+
 export interface MicrosoftEventInput {
   id: string;
   subject: string;
-  start: string;
-  end: string;
+  start: { dateTime: string; timeZone: string };
+  end: { dateTime: string; timeZone: string };
+  isAllDay: boolean;
+  attendees?: Array<{ emailAddress: { address: string; name: string } }>;
+  "@odata.nextLink"?: string;
 }
 
-export interface NormalizedMicrosoftEvent {
-  id: string;
-  title: string;
-  startIso: string;
-  endIso: string;
-  provider: "microsoft";
+export interface FetchWindow {
+  start: Date;
+  end: Date;
 }
 
 export function normalizeMicrosoftEvent(
   input: MicrosoftEventInput,
-): NormalizedMicrosoftEvent {
+  calendarId = "primary",
+): UnifiedEvent {
   return {
-    id: input.id,
+    id: `microsoft:${input.id}`,
+    sourceProvider: "microsoft",
+    sourceCalendarId: calendarId,
     title: input.subject,
-    startIso: input.start,
-    endIso: input.end,
-    provider: "microsoft",
+    startIso: input.start.dateTime,
+    endIso: input.end.dateTime,
+    allDay: input.isAllDay,
   };
 }
 
-export async function fetchMicrosoftEvents(): Promise<
-  NormalizedMicrosoftEvent[]
-> {
+export async function fetchMicrosoftEvents(
+  _token: string,
+  _window: FetchWindow,
+): Promise<UnifiedEvent[]> {
   return [];
 }

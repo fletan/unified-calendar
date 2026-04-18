@@ -1,30 +1,39 @@
+import type { UnifiedEvent } from "@unified-calendar/domain";
+
 export interface GoogleEventInput {
   id: string;
   summary: string;
-  start: string;
-  end: string;
+  start: { dateTime?: string; date?: string; timeZone?: string };
+  end: { dateTime?: string; date?: string; timeZone?: string };
+  attendees?: Array<{ email: string; displayName?: string }>;
 }
 
-export interface NormalizedGoogleEvent {
-  id: string;
-  title: string;
-  startIso: string;
-  endIso: string;
-  provider: "google";
+export interface FetchWindow {
+  start: Date;
+  end: Date;
 }
 
 export function normalizeGoogleEvent(
   input: GoogleEventInput,
-): NormalizedGoogleEvent {
+  calendarId = "primary",
+): UnifiedEvent {
+  const allDay = Boolean(input.start.date && !input.start.dateTime);
+  const startIso = input.start.dateTime ?? input.start.date ?? "";
+  const endIso = input.end.dateTime ?? input.end.date ?? "";
   return {
-    id: input.id,
+    id: `google:${input.id}`,
+    sourceProvider: "google",
+    sourceCalendarId: calendarId,
     title: input.summary,
-    startIso: input.start,
-    endIso: input.end,
-    provider: "google",
+    startIso,
+    endIso,
+    allDay,
   };
 }
 
-export async function fetchGoogleEvents(): Promise<NormalizedGoogleEvent[]> {
+export async function fetchGoogleEvents(
+  _token: string,
+  _window: FetchWindow,
+): Promise<UnifiedEvent[]> {
   return [];
 }
