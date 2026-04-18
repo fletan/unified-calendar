@@ -94,11 +94,11 @@
 
 **Independent Test**: Toggle one connected calendar off; verify its events disappear from `WeekView`; toggle back on; verify events reappear — without disconnecting the provider.
 
-- [ ] T030 [US3] Create `apps/web/src/components/CalendarContext.tsx` — React context providing `calendarSources: CalendarSource[]` and `toggleVisibility(provider: Provider, calendarId: string): void`; initialize one `CalendarSource` per connected provider (from `GET /api/session`) with `visible: true`; wrap calendar page subtree
-- [ ] T031 [US3] Implement `apps/web/src/components/CalendarSidebar.tsx` — `"use client"` component; consume `CalendarContext`; render `providerBadge` (from `packages/ui`) + checkbox toggle per `CalendarSource`; call `toggleVisibility` on toggle
-- [ ] T032 [US3] Update `apps/web/src/components/WeekView.tsx` — consume `CalendarContext`; filter `events` prop to only include entries where `event.sourceProvider` matches a `CalendarSource` with `visible: true`
-- [ ] T033 [US3] Update `apps/web/src/app/(calendar)/page.tsx` — wrap with `<CalendarContext.Provider>`; render `<CalendarSidebar />` alongside `<WeekView />`
-- [ ] T034 [US3] Write unit tests for `CalendarContext` toggle logic, `CalendarSidebar` toggle interaction, `WeekView` visibility filtering; achieve 100% coverage for `CalendarContext.tsx`, `CalendarSidebar.tsx`, updated `WeekView.tsx`; confirm `pnpm test:coverage` passes
+- [X] T030 [US3] Create `apps/web/src/components/CalendarContext.tsx` — React context providing `calendarSources: CalendarSource[]` and `toggleVisibility(provider: Provider, calendarId: string): void`; initialize one `CalendarSource` per connected provider (from `GET /api/session`) with `visible: true`; wrap calendar page subtree
+- [X] T031 [US3] Implement `apps/web/src/components/CalendarSidebar.tsx` — `"use client"` component; consume `CalendarContext`; render `providerBadge` (from `packages/ui`) + checkbox toggle per `CalendarSource`; call `toggleVisibility` on toggle
+- [X] T032 [US3] Update `apps/web/src/components/WeekView.tsx` — consume `CalendarContext`; filter `events` prop to only include entries where `event.sourceProvider` matches a `CalendarSource` with `visible: true`
+- [X] T033 [US3] Update `apps/web/src/app/(calendar)/page.tsx` — wrap with `<CalendarContext.Provider>`; render `<CalendarSidebar />` alongside `<WeekView />`
+- [X] T034 [US3] Write unit tests for `CalendarContext` toggle logic, `CalendarSidebar` toggle interaction, `WeekView` visibility filtering; achieve 100% coverage for `CalendarContext.tsx`, `CalendarSidebar.tsx`, updated `WeekView.tsx`; confirm `pnpm test:coverage` passes
 
 **Checkpoint**: All three user stories independently functional — unified calendar with per-provider visibility toggles.
 

@@ -3,13 +3,25 @@
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import type { UnifiedEvent } from "@unified-calendar/domain";
+import { useCalendarContext } from "./CalendarContext";
 
 interface WeekViewProps {
   events: UnifiedEvent[];
 }
 
 export function WeekView({ events }: WeekViewProps) {
-  const calendarEvents = events.map((e) => ({
+  const { calendarSources } = useCalendarContext();
+
+  const visibleEvents = events.filter((e) =>
+    calendarSources.some(
+      (s) =>
+        s.provider === e.sourceProvider &&
+        s.calendarId === e.sourceCalendarId &&
+        s.visible,
+    ),
+  );
+
+  const calendarEvents = visibleEvents.map((e) => ({
     id: e.id,
     title: e.title,
     start: e.startIso,
