@@ -1,12 +1,12 @@
-import { redirect } from "next/navigation";
-import { Suspense } from "react";
-import { WeekView } from "@/components/WeekView";
-import { ProviderBanner } from "@/components/ProviderBanner";
-import { CalendarLoadingFallback } from "@/components/CalendarLoadingFallback";
 import { CalendarContextProvider } from "@/components/CalendarContext";
+import { CalendarLoadingFallback } from "@/components/CalendarLoadingFallback";
 import { CalendarSidebar } from "@/components/CalendarSidebar";
+import { ProviderBanner } from "@/components/ProviderBanner";
+import { WeekView } from "@/components/WeekView";
 import { getSessionConnections } from "@/lib/session";
 import type { CalendarSource } from "@unified-calendar/domain";
+import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 interface ProviderMeta {
   provider: "google" | "microsoft";

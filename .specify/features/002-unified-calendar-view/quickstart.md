@@ -5,7 +5,7 @@
 ## Prerequisites
 
 - Node.js 22 (see CI: `.github/workflows/ci.yml`)
-- pnpm 10.6.2
+- pnpm 10.33.0
 - Docker (for Postgres)
 - Google Cloud Console app with Calendar API enabled
 - Azure AD app registration with `Calendars.Read` delegated permission
@@ -109,11 +109,11 @@ packages/
 
 ## Key Decisions (see research.md for full rationale)
 
-| Concern | Decision |
-|---|---|
-| OAuth token storage | `iron-session` encrypted HttpOnly cookie |
-| Silent refresh | Polling Route Handler every 4 min from root layout |
-| Event fetch window | −30 days / +90 days, single batch per provider per session |
-| Event cache | Postgres `cached_events` table, 5-min TTL, Postgres.js client |
-| Calendar UI | FullCalendar v6 `timeGridWeek`, MIT license, React 19 compatible |
-| Test coverage | Vitest v8, 100% threshold all packages, jsdom for React components |
+| Concern             | Decision                                                           |
+| ------------------- | ------------------------------------------------------------------ |
+| OAuth token storage | `iron-session` encrypted HttpOnly cookie                           |
+| Silent refresh      | Polling Route Handler every 4 min from root layout                 |
+| Event fetch window  | −30 days / +90 days, single batch per provider per session         |
+| Event cache         | Postgres `cached_events` table, 5-min TTL, Postgres.js client      |
+| Calendar UI         | FullCalendar v6 `timeGridWeek`, MIT license, React 19 compatible   |
+| Test coverage       | Vitest v8, 100% threshold all packages, jsdom for React components |

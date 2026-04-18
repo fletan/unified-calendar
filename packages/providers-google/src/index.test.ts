@@ -47,6 +47,18 @@ describe("normalizeGoogleEvent", () => {
     expect(event.sourceCalendarId).toBe("work@group.v.calendar.google.com");
   });
 
+  it("falls back to empty string when neither dateTime nor date is set", () => {
+    const event = normalizeGoogleEvent({
+      id: "g-x",
+      summary: "X",
+      start: {},
+      end: {},
+    });
+    expect(event.startIso).toBe("");
+    expect(event.endIso).toBe("");
+    expect(event.allDay).toBe(false);
+  });
+
   it("returns empty array from fetchGoogleEvents stub", async () => {
     await expect(
       fetchGoogleEvents("token", { start: new Date(), end: new Date() }),

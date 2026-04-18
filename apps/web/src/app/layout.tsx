@@ -1,7 +1,7 @@
 import "./globals.css";
+import { TokenRefreshPoller } from "@/components/TokenRefreshPoller";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { TokenRefreshPoller } from "@/components/TokenRefreshPoller";
 
 export const metadata: Metadata = {
   title: "Unified Calendar",

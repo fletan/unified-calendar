@@ -2,7 +2,7 @@
     "name": "@unified-calendar/workspace",
     "private": true,
     "version": "0.1.0",
-    "packageManager": "pnpm@10.6.2",
+    "packageManager": "pnpm@10.33.0",
     "scripts": {
         "build": "turbo run build",
         "dev": "turbo run dev --parallel",

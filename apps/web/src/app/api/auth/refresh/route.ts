@@ -1,8 +1,8 @@
+import { logProviderError } from "@/lib/observability";
+import { getSessionConnections, setSessionConnection } from "@/lib/session";
+import type { Provider } from "@unified-calendar/domain";
 import { google } from "googleapis";
 import { NextResponse } from "next/server";
-import type { Provider } from "@unified-calendar/domain";
-import { getSessionConnections, setSessionConnection } from "@/lib/session";
-import { logProviderError } from "@/lib/observability";
 
 const REFRESH_THRESHOLD_SECONDS = 5 * 60;
 

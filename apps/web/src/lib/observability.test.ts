@@ -1,5 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { logAuthEvent, logCalendarLoad, logProviderError } from "./observability";
+import {
+  logAuthEvent,
+  logCalendarLoad,
+  logProviderError,
+} from "./observability";
 
 function lastLog(spy: ReturnType<typeof vi.spyOn>): Record<string, unknown> {
   const call = spy.mock.calls[spy.mock.calls.length - 1];

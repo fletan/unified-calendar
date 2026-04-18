@@ -1,22 +1,34 @@
-import { describe, expect, it, vi } from "vitest";
 import { render } from "@testing-library/react";
-import { WeekView } from "./WeekView";
 import type { CalendarSource, UnifiedEvent } from "@unified-calendar/domain";
+import { describe, expect, it, vi } from "vitest";
+import { WeekView } from "./WeekView";
 
 const mockedEvents: { events: unknown[] }[] = [];
 
 vi.mock("@fullcalendar/react", () => ({
   default: vi.fn((props: { events: unknown[] }) => {
     mockedEvents.push(props);
-    return <div data-testid="fullcalendar" data-event-count={props.events.length} />;
+    return (
+      <div data-testid="fullcalendar" data-event-count={props.events.length} />
+    );
   }),
 }));
 
 vi.mock("@fullcalendar/timegrid", () => ({ default: {} }));
 
 const defaultSources: CalendarSource[] = [
-  { provider: "google", calendarId: "primary", name: "Google Cal", visible: true },
-  { provider: "microsoft", calendarId: "primary", name: "MS Cal", visible: true },
+  {
+    provider: "google",
+    calendarId: "primary",
+    name: "Google Cal",
+    visible: true,
+  },
+  {
+    provider: "microsoft",
+    calendarId: "primary",
+    name: "MS Cal",
+    visible: true,
+  },
 ];
 
 vi.mock("./CalendarContext", () => ({
@@ -26,7 +38,10 @@ vi.mock("./CalendarContext", () => ({
   })),
 }));
 
-const makeEvent = (id: string, provider: "google" | "microsoft" = "google"): UnifiedEvent => ({
+const makeEvent = (
+  id: string,
+  provider: "google" | "microsoft" = "google",
+): UnifiedEvent => ({
   id,
   sourceProvider: provider,
   sourceCalendarId: "primary",
@@ -41,20 +56,34 @@ describe("WeekView", () => {
     const { getByTestId } = render(
       <WeekView events={[makeEvent("google:g1"), makeEvent("google:g2")]} />,
     );
-    expect(getByTestId("fullcalendar").getAttribute("data-event-count")).toBe("2");
+    expect(getByTestId("fullcalendar").getAttribute("data-event-count")).toBe(
+      "2",
+    );
   });
 
   it("renders with no events", () => {
     const { getByTestId } = render(<WeekView events={[]} />);
-    expect(getByTestId("fullcalendar").getAttribute("data-event-count")).toBe("0");
+    expect(getByTestId("fullcalendar").getAttribute("data-event-count")).toBe(
+      "0",
+    );
   });
 
   it("filters out events from invisible sources", async () => {
     const { useCalendarContext } = await import("./CalendarContext");
     vi.mocked(useCalendarContext).mockReturnValueOnce({
       calendarSources: [
-        { provider: "google", calendarId: "primary", name: "G", visible: false },
-        { provider: "microsoft", calendarId: "primary", name: "M", visible: true },
+        {
+          provider: "google",
+          calendarId: "primary",
+          name: "G",
+          visible: false,
+        },
+        {
+          provider: "microsoft",
+          calendarId: "primary",
+          name: "M",
+          visible: true,
+        },
       ],
       toggleVisibility: vi.fn(),
     });
@@ -62,7 +91,10 @@ describe("WeekView", () => {
     mockedEvents.length = 0;
     render(
       <WeekView
-        events={[makeEvent("google:g1", "google"), makeEvent("microsoft:m1", "microsoft")]}
+        events={[
+          makeEvent("google:g1", "google"),
+          makeEvent("microsoft:m1", "microsoft"),
+        ]}
       />,
     );
 

@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { generateState, setStateCookie, verifyStateCookie } from "./auth";
 
 const cookieMap = new Map<string, string>();

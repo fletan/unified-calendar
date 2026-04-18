@@ -1,6 +1,12 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
 import type { SyncSnapshot, UnifiedEvent } from "@unified-calendar/domain";
-import { isStale, mergeProviderEvents, getCachedSnapshot, upsertSnapshot, getOrFetchEvents } from "./events";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  getCachedSnapshot,
+  getOrFetchEvents,
+  isStale,
+  mergeProviderEvents,
+  upsertSnapshot,
+} from "./events";
 
 const makeSnapshot = (overrides: Partial<SyncSnapshot> = {}): SyncSnapshot => {
   const now = new Date();
@@ -131,6 +137,37 @@ describe("getOrFetchEvents", () => {
     vi.clearAllMocks();
   });
 
+  it("returns cached snapshot when cache is fresh", async () => {
+    const { sql } = await import("./db");
+    const now = new Date();
+    const past30 = new Date(now);
+    past30.setDate(past30.getDate() - 31);
+    const future90 = new Date(now);
+    future90.setDate(future90.getDate() + 91);
+    (sql as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce([
+      {
+        user_id: "default",
+        provider: "google",
+        payload: [makeEvent("google:g-cached")],
+        fetched_at: now,
+        window_start: past30,
+        window_end: future90,
+      },
+    ]);
+
+    const conn = {
+      provider: "google" as const,
+      userId: "u1",
+      email: "u@g.com",
+      accessToken: "tok",
+      refreshToken: "ref",
+      expiresAt: 9999999999,
+    };
+    const { snapshot, stale } = await getOrFetchEvents("default", "google", conn);
+    expect(stale).toBe(false);
+    expect(snapshot.events).toHaveLength(1);
+  });
+
   it("fetches fresh events when cache is empty", async () => {
     const { sql } = await import("./db");
     (sql as unknown as ReturnType<typeof vi.fn>)
@@ -145,17 +182,86 @@ describe("getOrFetchEvents", () => {
       refreshToken: "ref",
       expiresAt: 9999999999,
     };
-    const { snapshot, stale } = await getOrFetchEvents("default", "google", conn);
+    const { snapshot, stale } = await getOrFetchEvents(
+      "default",
+      "google",
+      conn,
+    );
     expect(stale).toBe(false);
     expect(snapshot.events.length).toBeGreaterThanOrEqual(0);
+  });
+
+  it("fetches events via microsoft provider", async () => {
+    const { sql } = await import("./db");
+    (sql as unknown as ReturnType<typeof vi.fn>)
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([]);
+
+    const conn = {
+      provider: "microsoft" as const,
+      userId: "u1",
+      email: "u@ms.com",
+      accessToken: "tok",
+      refreshToken: "ref",
+      expiresAt: 9999999999,
+    };
+    const { snapshot, stale } = await getOrFetchEvents(
+      "default",
+      "microsoft",
+      conn,
+    );
+    expect(stale).toBe(false);
+    expect(snapshot.provider).toBe("microsoft");
+  });
+
+  it("returns stale=true with cached snapshot when fetch fails", async () => {
+    const { sql } = await import("./db");
+    const now = new Date();
+    const past30 = new Date(now);
+    past30.setDate(past30.getDate() - 31);
+    const future90 = new Date(now);
+    future90.setDate(future90.getDate() + 91);
+    (sql as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce([
+      {
+        user_id: "default",
+        provider: "google",
+        payload: [makeEvent("google:g-cached")],
+        fetched_at: new Date(0),
+        window_start: past30,
+        window_end: future90,
+      },
+    ]);
+
+    const { fetchGoogleEvents } = await import(
+      "@unified-calendar/providers-google"
+    );
+    (fetchGoogleEvents as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
+      new Error("Network error"),
+    );
+
+    const conn = {
+      provider: "google" as const,
+      userId: "u1",
+      email: "u@g.com",
+      accessToken: "tok",
+      refreshToken: "ref",
+      expiresAt: 9999999999,
+    };
+    const { snapshot, stale } = await getOrFetchEvents("default", "google", conn);
+    expect(stale).toBe(true);
+    expect(snapshot.events).toHaveLength(1);
   });
 
   it("returns stale=true and empty snapshot when fetch fails with no cache", async () => {
     const { sql } = await import("./db");
     (sql as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce([]);
 
-    const { fetchGoogleEvents } = await import("@unified-calendar/providers-google");
-    (fetchGoogleEvents as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error("Network error"));
+    const { fetchGoogleEvents } = await import(
+      "@unified-calendar/providers-google"
+    );
+    (fetchGoogleEvents as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
+      new Error("Network error"),
+    );
 
     const conn = {
       provider: "google" as const,

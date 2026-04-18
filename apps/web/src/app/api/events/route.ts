@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
-import { getSessionConnections } from "@/lib/session";
+import { USER_ID } from "@/lib/db";
 import { getOrFetchEvents, mergeProviderEvents } from "@/lib/events";
 import { logCalendarLoad, logProviderError } from "@/lib/observability";
-import { USER_ID } from "@/lib/db";
+import { getSessionConnections } from "@/lib/session";
+import { NextResponse } from "next/server";
 
 export async function GET(): Promise<NextResponse> {
   const connections = await getSessionConnections();
@@ -30,13 +30,17 @@ export async function GET(): Promise<NextResponse> {
   });
 
   const validSnapshots = results
-    .filter((r) => r !== null)
-    .map((r) => r!.snapshot);
+    .filter((r): r is NonNullable<typeof r> => r !== null)
+    .map((r) => r.snapshot);
 
   const events = mergeProviderEvents(validSnapshots);
   const hasStale = providerMeta.some((p) => p.stale);
 
-  logCalendarLoad(Date.now() - start, events.length, connections.map((c) => c.provider));
+  logCalendarLoad(
+    Date.now() - start,
+    events.length,
+    connections.map((c) => c.provider),
+  );
 
   const windowStart = new Date();
   windowStart.setDate(windowStart.getDate() - 30);
