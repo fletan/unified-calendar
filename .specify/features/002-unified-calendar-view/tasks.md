@@ -19,11 +19,11 @@
 
 **Purpose**: Install new dependencies, configure Vitest for jsdom + React, prepare env template.
 
-- [ ] T001 Install runtime deps (`googleapis`, `@azure/msal-node`, `iron-session`, `postgres`, `@fullcalendar/react`, `@fullcalendar/timegrid`) in `apps/web/package.json`
-- [ ] T002 Install dev deps (`@vitejs/plugin-react`, `@testing-library/react`, `@testing-library/user-event`) in `apps/web/package.json`
-- [ ] T003 [P] Configure `apps/web/vitest.config.ts` — add `plugins: [react()]`, `environment: 'jsdom'`, `setupFiles: ['./src/test-setup.ts']`, coverage exclusions for `src/app/layout.tsx`, `src/app/page.tsx`, `src/app/(calendar)/page.tsx`
-- [ ] T004 [P] Create `apps/web/src/test-setup.ts` — global jsdom / testing-library setup
-- [ ] T005 [P] Create `apps/web/.env.local.example` with all required env var keys: `SESSION_PASSWORD`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI`, `MICROSOFT_CLIENT_ID`, `MICROSOFT_CLIENT_SECRET`, `MICROSOFT_REDIRECT_URI`, `DATABASE_URL`
+- [X] T001 Install runtime deps (`googleapis`, `@azure/msal-node`, `iron-session`, `postgres`, `@fullcalendar/react`, `@fullcalendar/timegrid`) in `apps/web/package.json`
+- [X] T002 Install dev deps (`@vitejs/plugin-react`, `@testing-library/react`, `@testing-library/user-event`) in `apps/web/package.json`
+- [X] T003 [P] Configure `apps/web/vitest.config.ts` — add `plugins: [react()]`, `environment: 'jsdom'`, `setupFiles: ['./src/test-setup.ts']`, coverage exclusions for `src/app/layout.tsx`, `src/app/page.tsx`, `src/app/(calendar)/page.tsx`
+- [X] T004 [P] Create `apps/web/src/test-setup.ts` — global jsdom / testing-library setup
+- [X] T005 [P] Create `apps/web/.env.local.example` with all required env var keys: `SESSION_PASSWORD`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI`, `MICROSOFT_CLIENT_ID`, `MICROSOFT_CLIENT_SECRET`, `MICROSOFT_REDIRECT_URI`, `DATABASE_URL`
 
 **Checkpoint**: Dependencies installed, tooling configured — foundational implementation can begin.
 
