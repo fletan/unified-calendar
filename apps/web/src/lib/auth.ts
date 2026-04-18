@@ -1,4 +1,4 @@
-import { randomBytes } from "crypto";
+import { randomBytes } from "node:crypto";
 import { cookies } from "next/headers";
 
 const STATE_COOKIE = "oauth_state";

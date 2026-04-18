@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(bash .specify/scripts/bash/check-prerequisites.sh --json --paths-only)"
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(gh pr create:*)",
+      "Bash(pnpm *)"
     ]
   }
 }

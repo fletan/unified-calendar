@@ -1,0 +1,4 @@
+
+> @unified-calendar/domain@0.1.0 typecheck /Users/igiguere/projects/__perso/unified-calendar/packages/domain
+> tsc --noEmit
+

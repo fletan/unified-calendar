@@ -1,9 +1,9 @@
+import { verifyStateCookie } from "@/lib/auth";
+import { logAuthEvent } from "@/lib/observability";
+import { setSessionConnection } from "@/lib/session";
 import { ConfidentialClientApplication } from "@azure/msal-node";
 import type { Configuration } from "@azure/msal-node";
-import { NextRequest, NextResponse } from "next/server";
-import { verifyStateCookie } from "@/lib/auth";
-import { setSessionConnection } from "@/lib/session";
-import { logAuthEvent } from "@/lib/observability";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const { searchParams } = req.nextUrl;
@@ -37,7 +37,13 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
     const result = await msalApp.acquireTokenByCode({
       code,
-      scopes: ["Calendars.Read", "offline_access", "openid", "profile", "email"],
+      scopes: [
+        "Calendars.Read",
+        "offline_access",
+        "openid",
+        "profile",
+        "email",
+      ],
       redirectUri,
     });
 
@@ -65,6 +71,9 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     return NextResponse.redirect(new URL("/", req.url));
   } catch {
     logAuthEvent("microsoft", "failure", "token_exchange_failed");
-    return NextResponse.json({ error: "Provider unreachable" }, { status: 502 });
+    return NextResponse.json(
+      { error: "Provider unreachable" },
+      { status: 502 },
+    );
   }
 }

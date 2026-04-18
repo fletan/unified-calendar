@@ -1,11 +1,21 @@
-import { describe, expect, it } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import type { CalendarSource } from "@unified-calendar/domain";
+import { describe, expect, it } from "vitest";
 import { CalendarContextProvider, useCalendarContext } from "./CalendarContext";
 
 const initialSources: CalendarSource[] = [
-  { provider: "google", calendarId: "primary", name: "Google Cal", visible: false },
-  { provider: "microsoft", calendarId: "primary", name: "MS Cal", visible: false },
+  {
+    provider: "google",
+    calendarId: "primary",
+    name: "Google Cal",
+    visible: false,
+  },
+  {
+    provider: "microsoft",
+    calendarId: "primary",
+    name: "MS Cal",
+    visible: false,
+  },
 ];
 
 function ContextConsumer() {
@@ -16,6 +26,7 @@ function ContextConsumer() {
         <div key={`${s.provider}-${s.calendarId}`}>
           <span data-testid={`visible-${s.provider}`}>{String(s.visible)}</span>
           <button
+            type="button"
             onClick={() => toggleVisibility(s.provider, s.calendarId)}
             data-testid={`toggle-${s.provider}`}
           >

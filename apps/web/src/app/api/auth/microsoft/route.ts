@@ -1,10 +1,10 @@
+import { generateState, setStateCookie } from "@/lib/auth";
+import { logAuthEvent } from "@/lib/observability";
 import {
   ConfidentialClientApplication,
   type Configuration,
 } from "@azure/msal-node";
 import { NextResponse } from "next/server";
-import { generateState, setStateCookie } from "@/lib/auth";
-import { logAuthEvent } from "@/lib/observability";
 
 export async function GET(): Promise<NextResponse> {
   const clientId = process.env.MICROSOFT_CLIENT_ID;
@@ -13,7 +13,10 @@ export async function GET(): Promise<NextResponse> {
 
   if (!clientId || !clientSecret || !redirectUri) {
     logAuthEvent("microsoft", "failure", "missing_env");
-    return NextResponse.json({ error: "Server misconfiguration" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Server misconfiguration" },
+      { status: 500 },
+    );
   }
 
   const config: Configuration = {

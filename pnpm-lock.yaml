@@ -132,6 +132,10 @@ importers:
         version: 2.1.9(@types/node@22.19.15)
 
   packages/test-utils:
+    dependencies:
+      '@unified-calendar/domain':
+        specifier: workspace:*
+        version: link:../domain
     devDependencies:
       '@vitest/coverage-v8':
         specifier: ^2.1.8
@@ -144,6 +148,10 @@ importers:
         version: 2.1.9(@types/node@22.19.15)
 
   packages/ui:
+    dependencies:
+      '@unified-calendar/domain':
+        specifier: workspace:*
+        version: link:../domain
     devDependencies:
       '@vitest/coverage-v8':
         specifier: ^2.1.8
