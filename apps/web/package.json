@@ -19,6 +19,8 @@
         "@fullcalendar/react": "^6.1.20",
         "@fullcalendar/timegrid": "^6.1.20",
         "@unified-calendar/domain": "workspace:^",
+        "@unified-calendar/providers-google": "workspace:*",
+        "@unified-calendar/providers-microsoft": "workspace:*",
         "googleapis": "^171.4.0",
         "iron-session": "^8.0.4",
         "next": "15.0.4",
