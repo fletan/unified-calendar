@@ -28,7 +28,7 @@ _GATE: Passed before Phase 0 research. Re-checked after Phase 1 design below._
 - **Coverage Gate**: ✅ Vitest v8 with 100% threshold enforced in CI (`pnpm test:coverage`). Per-package configs include `src/**/*.ts(x)` with Next.js layout/page files excluded from measurement (they are thin shells, not business logic). See research item 8.
 - **Security and Privacy**: ✅ OAuth tokens stored in `iron-session` encrypted HttpOnly cookies. Cached event metadata scoped to `user_id`. No descriptions/attachments cached. No sensitive data in logs (FR-011).
 - **Observability and Operability**: ✅ Auth events, calendar load latency, and provider error rates instrumented per FR-012. Stale cache detection surfaces a provider-specific warning banner per FR-007.
-- **Simplicity and Compatibility**: ✅ Greenfield MVP — no prior version, no breaking changes, no migration needed (FR-013 satisfied). No unnecessary abstractions: no ORM (single Postgres table), no state management library (React context only), no extra auth framework.
+- **Simplicity and Compatibility**: ✅ Greenfield MVP — no prior external version, no migration plan required. `UnifiedEvent` in `packages/domain` receives additive fields (`id`, `sourceProvider`, `sourceCalendarId`, `allDay`) — semver-minor change, all internal callers updated in this feature (FR-013). No unnecessary abstractions: no ORM (single Postgres table), no state management library (React context only), no extra auth framework.
 
 _Post-design re-check: No violations introduced by Phase 1 design. Complexity tracking table not required._
 
@@ -179,8 +179,12 @@ No sensitive data (tokens, emails, event titles) in log payloads.
 | Route Handler logic              | node (extracted pure fns)        | vitest  | 100%            |
 | React Client Components          | jsdom + `@testing-library/react` | vitest  | 100%            |
 | Next.js layout/page shells       | excluded from coverage           | —       | —               |
+| Integration: `GET /api/events`   | node + real Postgres (Docker)    | vitest  | contract shape  |
+| Performance benchmark            | node + real Postgres (Docker)    | vitest  | P95 < 5 s       |
 
 Route Handler tests cover the extracted pure functions (token validation, cache logic, event normalization) rather than the `Response`-wiring — the latter is excluded from coverage alongside layout/page shells.
+
+The integration test for `GET /api/events` connects to the Docker Postgres instance (`DATABASE_URL` from `.env.test`), seeds provider snapshots, calls the handler's pure orchestration layer, and asserts the response shape matches `contracts/api-routes.md`. OAuth token exchange is not exercised — a fixture `UserConnection` is injected directly into the session helper. This satisfies Constitution Principle IV's requirement for at least one integration or contract-level verification path on critical flows.
 
 ### New Package Dependencies
 

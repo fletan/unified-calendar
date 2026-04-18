@@ -3,7 +3,7 @@
 **Input**: Design documents from `.specify/features/002-unified-calendar-view/`
 **Prerequisites**: plan.md ✅, spec.md ✅, research.md ✅, data-model.md ✅, contracts/api-routes.md ✅, quickstart.md ✅
 
-**Tests**: Unit test tasks included per story to satisfy FR-014 (100% coverage). No TDD/contract test approach assumed beyond unit coverage.
+**Tests**: Unit test tasks included per story to satisfy FR-014 (100% coverage). Integration test (T044) and performance benchmark (T045) added in Phase 6 to satisfy Constitution Principle IV and SC-003 respectively; both run against the Docker Postgres instance.
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
@@ -39,7 +39,7 @@
 - [ ] T007 [P] Update `packages/providers-google/src/index.ts` — update `GoogleEventInput` to nested `start`/`end` shape (`{ dateTime?: string; date?: string; timeZone?: string }`); change `normalizeGoogleEvent` return type to `UnifiedEvent` from `@unified-calendar/domain`; update `fetchGoogleEvents(token, window)` signature
 - [ ] T008 [P] Update `packages/providers-microsoft/src/index.ts` — update `MicrosoftEventInput` to nested `start`/`end` shape and add `isAllDay: boolean`; change `normalizeMicrosoftEvent` return type to `UnifiedEvent`; add `@odata.nextLink` pagination in `fetchMicrosoftEvents(token, window)`
 - [ ] T009 Implement `apps/web/src/lib/session.ts` — `iron-session` cookie config (`SESSION_PASSWORD`, `httpOnly: true`, `secure`, `sameSite: 'lax'`); export `getSession`, `getSessionConnections`, `setSessionConnection(conn: UserConnection)`, `removeSessionConnection(provider: Provider)`
-- [ ] T010 Implement `apps/web/src/lib/db.ts` — Postgres.js client from `DATABASE_URL`; on module load run `CREATE TABLE IF NOT EXISTS cached_events (...)` and `CREATE INDEX IF NOT EXISTS idx_cached_events_lookup (...)` per data-model.md; export `sql` tagged-template client
+- [ ] T010 Implement `apps/web/src/lib/db.ts` — Postgres.js client from `DATABASE_URL`; on module load run `CREATE TABLE IF NOT EXISTS cached_events (...)` and `CREATE INDEX IF NOT EXISTS idx_cached_events_lookup (...)` per data-model.md; export `sql` tagged-template client; `user_id` column uses the fixed constant `'default'` for this single-user MVP (no account system — the value is a placeholder for future multi-user expansion)
 - [ ] T011 Implement `apps/web/src/lib/observability.ts` — export `logAuthEvent(provider, outcome: 'success'|'failure', errorType?)`, `logCalendarLoad(durationMs, eventCount, providers)`, `logProviderError(provider, errorType: 'fetch_failed'|'refresh_failed', detail?)` as structured `console.log` JSON; no tokens/emails/titles in payloads (FR-011)
 
 **Checkpoint**: Foundation ready — user story implementation can now begin.
@@ -61,8 +61,9 @@
 - [ ] T018 [US1] Implement `apps/web/src/app/api/session/route.ts` — `GET /api/session`: read session connections, return `{ connections: [{ provider, email, expiresAt }] }` or `{ connections: [] }` when none (never `401`)
 - [ ] T019 [US1] Implement `apps/web/src/components/TokenRefreshPoller.tsx` — `"use client"` component; `setInterval` every 4 minutes calling `GET /api/auth/refresh`; on `401` redirect to `/`; mount in `apps/web/src/app/layout.tsx`
 - [ ] T020 [US1] Implement `apps/web/src/components/OnboardingPrompt.tsx` — `"use client"` component; "Connect Google" button linking to `/api/auth/google` and "Connect Microsoft" button linking to `/api/auth/microsoft`; shown when `connections.length === 0`
+- [ ] T042 [US1] Implement `apps/web/src/components/AuthErrorBanner.tsx` — `"use client"` component; accept `failures: { provider: Provider; retryHref: string }[]` prop; render an inline error banner per failed provider with a "Retry" link pointing to the provider's OAuth initiation route (`/api/auth/google` or `/api/auth/microsoft`); shown when `GET /api/session` returns a connection with `status: 'error'`; satisfies FR-008 partial-auth-failure inline error + retry requirement; write unit tests achieving 100% coverage for this component
 - [ ] T021 [US1] Wire `apps/web/src/app/layout.tsx` — root layout: mount `<TokenRefreshPoller />`
-- [ ] T022 [US1] Wire `apps/web/src/app/page.tsx` — landing page: fetch `GET /api/session`; render `<OnboardingPrompt />` if no connections; redirect to `/(calendar)` if connected
+- [ ] T022 [US1] Wire `apps/web/src/app/page.tsx` — landing page: fetch `GET /api/session`; render `<OnboardingPrompt />` if no connections; render `<AuthErrorBanner />` for any connections with `status: 'error'`; redirect to `/(calendar)` if all connections are healthy
 - [ ] T023 [US1] Write unit tests for pure functions extracted from US1 route handlers (state-cookie generation/verification, token-expiry check, session helpers, observability auth log shape); achieve 100% coverage for `apps/web/src/lib/session.ts`, `apps/web/src/lib/observability.ts`, and extracted auth pure functions; confirm `pnpm test:coverage` passes
 
 **Checkpoint**: User Story 1 fully functional — both OAuth flows complete, session persists, silent refresh polls every 4 min, onboarding renders when no providers connected.
@@ -79,7 +80,8 @@
 - [ ] T025 [US2] Implement `apps/web/src/app/api/events/route.ts` — `GET /api/events`: read session connections; for each provider call `getOrFetchEvents`; call `mergeProviderEvents`; return `200` with full shape per contract (events + meta with `windowStart`, `windowEnd`, per-provider `fetchedAt`/`stale`); return `206 Partial Content` when any provider `stale=true` due to fetch failure (FR-007); `401` if no session; call `logCalendarLoad(duration, count, providers)`; call `logProviderError` on fetch failures
 - [ ] T026 [US2] Implement `apps/web/src/components/WeekView.tsx` — `"use client"` component; accept `events: UnifiedEvent[]` prop; render `<FullCalendar plugins={[timeGridPlugin]} initialView="timeGridWeek" events={...} />` mapping `UnifiedEvent` to FullCalendar event objects (`extendedProps: { sourceProvider }` for color coding)
 - [ ] T027 [US2] Implement `apps/web/src/components/ProviderBanner.tsx` — `"use client"` component; accept `providers: { provider: Provider; stale: boolean }[]` prop; render a warning banner for each provider where `stale === true`
-- [ ] T028 [US2] Implement `apps/web/src/app/(calendar)/page.tsx` — Server Component shell: fetch `GET /api/events`; pass `events` to `<WeekView />`; pass provider meta to `<ProviderBanner />`; redirect to `/` on `401`
+- [ ] T028 [US2] Implement `apps/web/src/app/(calendar)/page.tsx` — Server Component shell: fetch `GET /api/events`; pass `events` to `<WeekView />`; pass provider meta to `<ProviderBanner />`; redirect to `/` on `401`; wrap the `<WeekView />` subtree in a `<Suspense fallback={<CalendarLoadingFallback />}>` boundary so a loading skeleton is shown while the Server Component streams; implement `apps/web/src/components/CalendarLoadingFallback.tsx` as a simple placeholder skeleton (satisfies FR-008 loading state)
+- [ ] T043 [US2] Implement `apps/web/src/components/CalendarLoadingFallback.tsx` — static skeleton component shown as the Suspense fallback during `GET /api/events` fetch; no props; render a visually recognizable loading placeholder (e.g., grey box at calendar dimensions); write unit test achieving 100% coverage for this component
 - [ ] T029 [US2] Write unit tests for pure functions extracted from US2 logic (`events.ts` stale-check, cache read/write, merge logic; `GET /api/events` response-shape assembly; `WeekView` event mapping; `ProviderBanner` stale rendering); achieve 100% coverage for `apps/web/src/lib/events.ts`, `apps/web/src/lib/db.ts`, `providers-google`, `providers-microsoft`; confirm `pnpm test:coverage` passes
 
 **Checkpoint**: User Stories 1 AND 2 independently functional — unified calendar renders events from all connected providers with partial-failure resilience and stale banners.
@@ -108,11 +110,13 @@
 
 - [ ] T035 [P] Add `packages/ui/src/index.ts` additions — implement `providerBadge(provider: Provider): { label: string; color: string }` utility; achieve 100% unit coverage for `ui` package
 - [ ] T036 [P] Add `packages/test-utils/src/index.ts` additions — implement `expectNever`, `isDefined`, and fixture builders for `UnifiedEvent`, `UserConnection`, `CalendarSource`; achieve 100% coverage for `test-utils` package
-- [ ] T037 Security audit — verify: `oauth_state` cookie is `HttpOnly` and checked in both OAuth callbacks (CSRF); session cookie has `httpOnly: true`, `secure`, `sameSite: 'lax'`; `observability.ts` payloads contain no tokens/emails/titles; `cached_events` rows are `user_id`-scoped; no event descriptions/attachments cached (FR-011)
+- [ ] T037 Security audit (implementation correctness) — verify in code: `oauth_state` cookie is `HttpOnly` and checked in both OAuth callbacks (CSRF); session cookie has `httpOnly: true`, `secure`, `sameSite: 'lax'`; `observability.ts` payloads contain no tokens/emails/titles; `cached_events` rows are `user_id`-scoped; no event descriptions/attachments cached (FR-011); record any discrepancy as a bug before T038
 - [ ] T038 Run `pnpm lint` and `pnpm typecheck` across monorepo; resolve all errors
 - [ ] T039 Run `pnpm test:coverage` for all packages; confirm 100% threshold passes in CI (FR-014, SC-005)
 - [ ] T040 Validate quickstart.md flow end-to-end: `pnpm install` → `docker compose up -d` → configure `.env.local` → `pnpm dev` → connect Google → connect Microsoft → verify unified week-view renders → verify visibility toggles work
-- [ ] T041 Capture constitution compliance evidence for PR description: trace FR-001–FR-017 and SC-001–SC-005 fulfillment; confirm no breaking changes to existing interfaces (FR-013)
+- [ ] T041 Capture constitution compliance evidence for PR description (reviewer documentation): trace FR-001–FR-017 and SC-001–SC-005 fulfillment; document the additive `UnifiedEvent` interface changes (`id`, `sourceProvider`, `sourceCalendarId`, `allDay`) as semver-minor additions to `packages/domain` with all internal callers updated in this feature (FR-013); confirm T037 security audit passed with no open bugs
+- [ ] T044 Write integration test for `GET /api/events` against real Postgres (Docker) — create `apps/web/src/__tests__/integration/events.integration.test.ts`; connect to Docker Postgres via `DATABASE_URL` from `.env.test`; seed `cached_events` table with two provider snapshots (google + microsoft, 10 events each); inject a fixture `UserConnection[]` directly into the session helper (bypassing OAuth); call the `getOrFetchEvents` + `mergeProviderEvents` orchestration layer; assert response shape matches `contracts/api-routes.md` (event array, meta structure, `windowStart`/`windowEnd`, per-provider `fetchedAt`/`stale`); assert `206` is returned when one provider snapshot is stale; satisfies Constitution Principle IV integration/contract verification requirement
+- [ ] T045 Write performance benchmark for `GET /api/events` — create `apps/web/src/__tests__/perf/events.bench.ts`; seed Postgres Docker fixture with 500 `UnifiedEvent` rows across both providers; call the `events.ts` orchestration layer 20 times, record per-call duration; assert P95 duration is below 5000 ms; fail test if threshold exceeded; satisfies SC-003
 
 ---
 
@@ -147,6 +151,7 @@
 - T009, T010, T011 — independent lib files (Phase 2)
 - T012, T013, T014, T015 — independent route files per provider (Phase 3)
 - T035, T036 — independent shared packages (Phase 6)
+- T044, T045 — independent integration/perf tests (Phase 6, both require Docker Postgres up)
 
 ---
 

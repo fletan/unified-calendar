@@ -120,7 +120,9 @@ then verifying the corresponding events disappear and reappear in the same unifi
   display an onboarding prompt with "Connect Google" and "Connect Microsoft" action buttons
   instead of an empty calendar grid. When one provider authentication fails while another
   succeeds, the system MUST persist the successful connection and display an inline error
-  with a retry action for the failed provider.
+  with a retry action for the failed provider. While calendar events are loading, the system
+  MUST display a loading state (React Suspense boundary with a fallback) instead of a blank
+  calendar grid.
 - **FR-009**: System MUST persist connection state securely so users can return without
   reconnecting unless credentials are invalid. OAuth tokens MUST be stored in HttpOnly
   cookies (set by the backend) to prevent XSS exposure; tokens MUST NOT be stored in
@@ -137,6 +139,10 @@ then verifying the corresponding events disappear and reappear in the same unifi
   (2) Calendar load latency — time from request to rendered events per session load;
   (3) Provider error rates — count of failed fetches and token refresh failures per provider.
 - **FR-013**: System MUST identify any breaking change and define migration expectations.
+  This MVP extends the `UnifiedEvent` interface in `packages/domain` (adds `id`, `sourceProvider`,
+  `sourceCalendarId`, `allDay` fields). This is a semver-minor additive change to the shared
+  package. No downstream consumers outside this monorepo exist at MVP; no migration plan is
+  required beyond updating all internal callers within this feature.
 - **FR-014**: System MUST maintain 100% unit test coverage for all production code,
   including frontend, backend, and shared modules.
 - **FR-015**: System MUST define coverage tooling, thresholds, and CI enforcement for
@@ -165,7 +171,9 @@ _No critical clarification markers are required for this MVP specification._
   unified view during normal provider availability.
 - **SC-003**: 95% of unified calendar loads complete in under 5 seconds for an account
   with up to 500 events across the full fetch window (1 month past + 3 months future)
-  across all connected calendars.
+  across all connected calendars. Verified by an automated Vitest benchmark that seeds
+  500 events into the Postgres Docker fixture and asserts P95 response time for
+  `GET /api/events` is below 5 s.
 - **SC-004**: In provider outage simulations for one source, the unified calendar
   continues to render events from remaining sources in 100% of test runs.
 - **SC-005**: Unit test coverage remains at 100% for frontend, backend, and shared
