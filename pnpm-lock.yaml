@@ -26,6 +26,9 @@ importers:
       '@fullcalendar/timegrid':
         specifier: ^6.1.20
         version: 6.1.20(@fullcalendar/core@6.1.20)
+      '@unified-calendar/domain':
+        specifier: workspace:^
+        version: link:../../packages/domain
       googleapis:
         specifier: ^171.4.0
         version: 171.4.0
@@ -91,6 +94,10 @@ importers:
         version: 2.1.9(@types/node@22.19.15)
 
   packages/providers-google:
+    dependencies:
+      '@unified-calendar/domain':
+        specifier: workspace:^
+        version: link:../domain
     devDependencies:
       '@vitest/coverage-v8':
         specifier: ^2.1.8
@@ -103,6 +110,10 @@ importers:
         version: 2.1.9(@types/node@22.19.15)
 
   packages/providers-microsoft:
+    dependencies:
+      '@unified-calendar/domain':
+        specifier: workspace:^
+        version: link:../domain
     devDependencies:
       '@vitest/coverage-v8':
         specifier: ^2.1.8
