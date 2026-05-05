@@ -32,8 +32,25 @@ export function normalizeGoogleEvent(
 }
 
 export async function fetchGoogleEvents(
-  _token: string,
-  _window: FetchWindow,
+  token: string,
+  window: FetchWindow,
 ): Promise<UnifiedEvent[]> {
-  return [];
+  const params = new URLSearchParams({
+    timeMin: window.start.toISOString(),
+    timeMax: window.end.toISOString(),
+    singleEvents: "true",
+    maxResults: "2500",
+  });
+
+  const res = await fetch(
+    `https://www.googleapis.com/calendar/v3/calendars/primary/events?${params}`,
+    { headers: { Authorization: `Bearer ${token}` } },
+  );
+
+  if (!res.ok) {
+    throw new Error(`Google Calendar API error: ${res.status}`);
+  }
+
+  const data = (await res.json()) as { items?: GoogleEventInput[] };
+  return (data.items ?? []).map((item) => normalizeGoogleEvent(item));
 }

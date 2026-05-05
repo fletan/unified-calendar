@@ -39,7 +39,7 @@ vi.mock("./db", () => {
   const rows: unknown[] = [];
   const taggedSql = Object.assign(
     vi.fn(async () => rows),
-    { rows },
+    { rows, json: (v: unknown) => v },
   );
   return { sql: taggedSql, USER_ID: "default" };
 });

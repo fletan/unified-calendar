@@ -2,6 +2,18 @@ import type { SyncSnapshot, UnifiedEvent, UserConnection } from "@unified-calend
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { getCachedSnapshot, getOrFetchEvents, mergeProviderEvents, upsertSnapshot } from "../../lib/events";
 
+// T044 + T051: Integration tests against real Postgres.
+// Requires DATABASE_URL in environment — run `pnpm db` first.
+// T044: contract shape verification; T051: provider outage simulation.
+
+vi.mock("@unified-calendar/providers-google", () => ({
+  fetchGoogleEvents: vi.fn(),
+}));
+
+vi.mock("@unified-calendar/providers-microsoft", () => ({
+  fetchMicrosoftEvents: vi.fn(),
+}));
+
 const DATABASE_URL = process.env.DATABASE_URL;
 const shouldRun = Boolean(DATABASE_URL);
 
@@ -68,6 +80,8 @@ describe.skipIf(!shouldRun)("GET /api/events integration", () => {
     await sql.end();
   });
 
+  // T044: contract shape verification
+
   it("returns cached google snapshot with 10 events", async () => {
     const cached = await getCachedSnapshot(TEST_USER, "google");
     expect(cached).not.toBeNull();
@@ -120,13 +134,21 @@ describe.skipIf(!shouldRun)("GET /api/events integration", () => {
     expect(body.meta.providers[1]).toMatchObject({ provider: "microsoft", stale: false });
   });
 
-  it("returns stale=true (206 equivalent) when a provider snapshot is stale", async () => {
-    const staleConn = makeConn("google");
-    vi.mock("@unified-calendar/providers-google", () => ({
-      fetchGoogleEvents: vi.fn().mockRejectedValue(new Error("network error")),
-    }));
+  // T051: provider outage simulation
+  // Seeds only one provider (microsoft) with fresh data, forces the other (google)
+  // fetch to throw, and asserts the healthy provider's events are returned while
+  // the failing provider returns stale data with stale=true (SC-004).
 
-    const staleSnapshot: SyncSnapshot = {
+  it("returns healthy provider events and stale=true for the failing provider (SC-004)", async () => {
+    const { fetchGoogleEvents } = await import("@unified-calendar/providers-google");
+    const { fetchMicrosoftEvents } = await import("@unified-calendar/providers-microsoft");
+
+    // Reset mocks: Google fetch throws, Microsoft fetch succeeds
+    vi.mocked(fetchGoogleEvents).mockRejectedValue(new Error("provider outage"));
+    vi.mocked(fetchMicrosoftEvents).mockResolvedValue(microsoftEvents);
+
+    // Seed a stale google snapshot so the fallback path is reachable
+    const staleGoogleSnapshot: SyncSnapshot = {
       userId: TEST_USER,
       provider: "google",
       events: googleEvents,
@@ -134,10 +156,26 @@ describe.skipIf(!shouldRun)("GET /api/events integration", () => {
       windowStart: past30,
       windowEnd: future90,
     };
-    await upsertSnapshot(staleSnapshot);
+    await upsertSnapshot(staleGoogleSnapshot);
 
-    const { snapshot, stale } = await getOrFetchEvents(TEST_USER, "google", staleConn);
-    expect(stale).toBe(true);
-    expect(snapshot.events.length).toBeGreaterThanOrEqual(0);
+    // Seed a fresh microsoft snapshot so it is served from cache without a live fetch
+    await upsertSnapshot(microsoftSnapshot);
+
+    const googleResult = await getOrFetchEvents(TEST_USER, "google", makeConn("google"));
+    const microsoftResult = await getOrFetchEvents(TEST_USER, "microsoft", makeConn("microsoft"));
+
+    // Google is down: stale cache is returned
+    expect(googleResult.stale).toBe(true);
+    expect(googleResult.snapshot.events).toHaveLength(10);
+    expect(googleResult.snapshot.events.every((e) => e.sourceProvider === "google")).toBe(true);
+
+    // Microsoft is healthy: fresh events are returned
+    expect(microsoftResult.stale).toBe(false);
+    expect(microsoftResult.snapshot.events).toHaveLength(10);
+    expect(microsoftResult.snapshot.events.every((e) => e.sourceProvider === "microsoft")).toBe(true);
+
+    // Merged result from both providers contains all 20 events
+    const merged = mergeProviderEvents([googleResult.snapshot, microsoftResult.snapshot]);
+    expect(merged).toHaveLength(20);
   });
 });

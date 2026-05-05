@@ -4,7 +4,40 @@
       "Bash(git commit:*)",
       "Bash(git push:*)",
       "Bash(gh pr create:*)",
-      "Bash(pnpm *)"
+      "Bash(pnpm *)",
+      "Bash(chmod +x /Users/igiguere/projects/__perso/unified-calendar/scripts/ensure-db.sh)",
+      "Bash(docker compose *)",
+      "Bash(bash scripts/ensure-db.sh)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(d if isinstance\\(d,dict\\) else d[0]\\)\")",
+      "Bash(docker port *)",
+      "Bash(psql postgres://postgres:postgres@localhost:5432/unified_calendar -c \"SELECT 1\")",
+      "Bash(bash /Users/igiguere/projects/__perso/unified-calendar/.specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks)",
+      "Bash(lsof -ti:3000)",
+      "Bash(pnpm dev *)",
+      "Bash(echo \"PID: $!\")",
+      "Bash(pnpm dev --filter @unified-calendar/web > /tmp/nextjs-dev.log 2>&1 & *)",
+      "Bash(PLAYWRIGHT_TEST_BASE_URL=http://localhost:3000 pnpm exec playwright test --reporter=list)",
+      "Bash(node -e \"require\\('dotenv'\\).config\\({path:'.env.local'}\\); console.log\\(process.env.DATABASE_URL\\)\")",
+      "Bash(psql \"postgres://postgres:postgres@localhost:5432/unified_calendar\" -c \"SELECT 1\")",
+      "Bash(node -e \"process.loadEnvFile\\('/Users/igiguere/projects/__perso/unified-calendar/apps/web/.env.local'\\); console.log\\(process.env.DATABASE_URL\\)\")",
+      "Bash(node -e ' *)",
+      "Bash(psql \"postgres://postgres:postgres@localhost:5432/unified_calendar\" -c \"SELECT user_id, provider, jsonb_array_length\\(payload\\) as event_count, fetched_at FROM cached_events WHERE user_id = 'default';\")",
+      "Bash(psql \"postgres://postgres:postgres@localhost:5432/unified_calendar\" -c \"SELECT user_id, provider, jsonb_array_length\\(payload\\) as cnt, payload->0->>'title' as first_title FROM cached_events WHERE user_id='default';\")",
+      "Bash(psql \"postgres://postgres:postgres@localhost:5432/unified_calendar\" -c \"SELECT user_id, provider, jsonb_typeof\\(payload\\), payload FROM cached_events WHERE user_id='default';\")",
+      "Bash(psql \"postgres://postgres:postgres@localhost:5432/unified_calendar\" -c \"SELECT user_id, provider, jsonb_typeof\\(payload\\) FROM cached_events;\")",
+      "Bash(psql \"postgres://postgres:postgres@localhost:5432/unified_calendar\" -c \"SELECT payload FROM cached_events WHERE user_id='default';\")",
+      "Bash(DATABASE_URL=\"postgres://postgres:postgres@localhost:5432/unified_calendar\" pnpm test --filter @unified-calendar/web -- --reporter=verbose src/__tests__/integration/)",
+      "Bash(DATABASE_URL=\"postgres://postgres:postgres@localhost:5432/unified_calendar\" pnpm exec vitest run --reporter=verbose src/__tests__/integration/)",
+      "Bash(DATABASE_URL=\"postgres://postgres:postgres@localhost:5432/unified_calendar\" pnpm exec vitest run --reporter=verbose 'src/__tests__/integration/events.integration.test.ts')",
+      "Bash(DATABASE_URL=\"postgres://postgres:postgres@localhost:5432/unified_calendar\" pnpm exec vitest run --reporter=verbose --include='src/__tests__/integration/events.integration.test.ts')",
+      "Bash(DATABASE_URL=\"postgres://postgres:postgres@localhost:5432/unified_calendar\" pnpm exec vitest run 'src/__tests__/integration')",
+      "Bash(psql \"postgres://postgres:postgres@localhost:5432/unified_calendar\" -c \"DELETE FROM cached_events;\")",
+      "Bash(psql \"postgres://postgres:postgres@localhost:5432/unified_calendar\" -c \"SELECT user_id, provider, jsonb_typeof\\(payload\\), jsonb_array_length\\(payload\\) FROM cached_events;\")",
+      "Bash(grep -v \"NOTICE\\\\|severity\\\\|message\\\\|where\\\\|file\\\\|line\\\\|routine\\\\|code\\\\|relation\\\\|SQL statement\\\\|BIGSERIAL\\\\|user_id\\\\|provider\\\\|payload\\\\|fetched\\\\|window\\\\|UNIQUE\\\\|PL\\\\|parse\\\\|transformCreate\\\\|{$\\\\|^  ['\\\\\"]\")",
+      "Bash(xargs cat)"
+    ],
+    "additionalDirectories": [
+      "/private/tmp"
     ]
   }
 }

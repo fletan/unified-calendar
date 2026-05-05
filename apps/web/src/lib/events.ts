@@ -71,7 +71,7 @@ export async function upsertSnapshot(snapshot: SyncSnapshot): Promise<void> {
     VALUES (
       ${snapshot.userId},
       ${snapshot.provider},
-      ${JSON.stringify(snapshot.events)},
+      ${sql.json(snapshot.events as unknown as import("postgres").JSONValue)},
       ${snapshot.fetchedAt},
       ${snapshot.windowStart},
       ${snapshot.windowEnd}

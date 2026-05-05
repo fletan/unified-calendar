@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { fetchGoogleEvents, normalizeGoogleEvent } from "./index";
 
 describe("normalizeGoogleEvent", () => {
@@ -59,9 +59,67 @@ describe("normalizeGoogleEvent", () => {
     expect(event.allDay).toBe(false);
   });
 
-  it("returns empty array from fetchGoogleEvents stub", async () => {
+  it("fetches and normalizes events from Google Calendar API", async () => {
+    const mockItems = [
+      {
+        id: "evt-1",
+        summary: "Stand-up",
+        start: { dateTime: "2026-05-05T09:00:00Z" },
+        end: { dateTime: "2026-05-05T09:30:00Z" },
+      },
+    ];
+
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ items: mockItems }),
+      }),
+    );
+
+    const events = await fetchGoogleEvents("tok", {
+      start: new Date("2026-05-01"),
+      end: new Date("2026-05-31"),
+    });
+
+    expect(events).toHaveLength(1);
+    expect(events[0]).toMatchObject({
+      id: "google:evt-1",
+      title: "Stand-up",
+      sourceProvider: "google",
+    });
+
+    vi.unstubAllGlobals();
+  });
+
+  it("throws when the API returns a non-ok response", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({ ok: false, status: 401 }),
+    );
+
     await expect(
-      fetchGoogleEvents("token", { start: new Date(), end: new Date() }),
-    ).resolves.toEqual([]);
+      fetchGoogleEvents("bad-token", { start: new Date(), end: new Date() }),
+    ).rejects.toThrow("Google Calendar API error: 401");
+
+    vi.unstubAllGlobals();
+  });
+
+  it("returns empty array when API returns no items", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({}),
+      }),
+    );
+
+    const events = await fetchGoogleEvents("tok", {
+      start: new Date(),
+      end: new Date(),
+    });
+
+    expect(events).toEqual([]);
+    vi.unstubAllGlobals();
   });
 });

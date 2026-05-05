@@ -7,7 +7,7 @@ export default async function Page() {
   const connections = await getSessionConnections();
 
   if (connections.length > 0) {
-    redirect("/(calendar)");
+    redirect("/calendar");
   }
 
   const failures = connections
