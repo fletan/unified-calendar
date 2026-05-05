@@ -19,10 +19,10 @@ pnpm install
 ## 2. Start Postgres
 
 ```bash
-docker compose -f infra/docker/docker-compose.yml up -d
+pnpm db
 ```
 
-Postgres will be available at `localhost:5432`, database `unified_calendar`.
+Starts Postgres if not already running (Docker container at `localhost:5432`, database `unified_calendar`).
 
 ## 3. Configure environment variables
 

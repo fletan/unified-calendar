@@ -99,9 +99,6 @@ then verifying the corresponding events disappear and reappear in the same unifi
 - **FR-003**: System MUST retrieve and display events from all connected calendars in
   one unified calendar view. The default view on open MUST be a week view (7-day grid,
   time-slotted); other view modes (day, month, agenda) MAY be offered but are not required for MVP.
-- **FR-017**: System MUST fetch events covering a window of 1 month in the past through
-  3 months in the future as a single batch per provider on session load, to minimize API
-  quota usage and enable smooth navigation without additional requests.
 - **FR-004**: System MUST include source metadata per event so users can identify which
   provider/calendar each event originates from.
 - **FR-005**: System MUST provide per-calendar visibility controls without disconnecting
@@ -112,9 +109,6 @@ then verifying the corresponding events disappear and reappear in the same unifi
   from other connected providers. When a provider is temporarily unavailable during
   refresh, the system MUST display the last successfully cached events for that provider
   alongside a provider-specific warning banner indicating stale data.
-- **FR-016**: When a provider OAuth token expires mid-session, the system MUST attempt a
-  silent background token refresh without interrupting the user. A re-authentication prompt
-  MUST only be shown if the silent refresh itself fails.
 - **FR-008**: System MUST provide user-visible states for no data, loading, and provider
   authentication/connection errors. When no calendars are connected, the system MUST
   display an onboarding prompt with "Connect Google" and "Connect Microsoft" action buttons
@@ -127,29 +121,33 @@ then verifying the corresponding events disappear and reappear in the same unifi
   reconnecting unless credentials are invalid. OAuth tokens MUST be stored in HttpOnly
   cookies (set by the backend) to prevent XSS exposure; tokens MUST NOT be stored in
   localStorage or accessible JavaScript.
-- **FR-010**: System MUST define story-level testability criteria for each user story.
 - **FR-011**: System MUST enforce the following security/privacy constraints for sensitive
-  data: (1) OAuth tokens MUST be stored in HttpOnly cookies only (never in localStorage or
-  JS-accessible storage); (2) Cached event metadata (titles, times, attendees) MUST be
-  scoped to the authenticated user and MUST NOT be accessible across user sessions;
-  (3) Event descriptions and attachments MUST NOT be cached server-side in MVP;
-  (4) No sensitive data MUST be logged in plaintext in observability signals.
+  data: (1) Cached event metadata (titles, times, attendees) MUST be scoped to the
+  authenticated user and MUST NOT be accessible across user sessions;
+  (2) Event descriptions and attachments MUST NOT be cached server-side in MVP;
+  (3) No sensitive data MUST be logged in plaintext in observability signals.
+  (Token storage constraints are defined in FR-009.)
 - **FR-012**: System MUST instrument the following observability signals for critical flows:
   (1) Auth events — success/failure per provider with error type;
   (2) Calendar load latency — time from request to rendered events per session load;
   (3) Provider error rates — count of failed fetches and token refresh failures per provider.
 - **FR-013**: System MUST identify any breaking change and define migration expectations.
-  This MVP extends the `UnifiedEvent` interface in `packages/domain` (adds `id`, `sourceProvider`,
-  `sourceCalendarId`, `allDay` fields). This is a semver-minor additive change to the shared
-  package. No downstream consumers outside this monorepo exist at MVP; no migration plan is
-  required beyond updating all internal callers within this feature.
+  This MVP introduces additive changes to the shared event model (new fields for provider
+  identity, all-day flag, and scoped calendar ID). These are non-breaking additions with no
+  external consumers; all internal callers are updated within this feature.
 - **FR-014**: System MUST maintain 100% unit test coverage for all production code,
   including frontend, backend, and shared modules.
-- **FR-015**: System MUST define coverage tooling, thresholds, and CI enforcement for
-  unit coverage verification.
-- **FR-018**: System MUST include at least one end-to-end test per user story that
-  exercises the complete stack — frontend, backend API, and database — against the
-  primary acceptance scenario for that story.
+- **FR-016**: When a provider OAuth token expires mid-session, the system MUST attempt a
+  silent background token refresh without interrupting the user. A re-authentication prompt
+  MUST only be shown if the silent refresh itself fails.
+- **FR-017**: System MUST fetch events covering a window of 1 month in the past through
+  3 months in the future as a single batch per provider on session load, to minimize API
+  quota usage and enable smooth navigation without additional requests.
+- **FR-018**: System MUST include at least one end-to-end test for the feature that
+  exercises the complete stack — frontend, backend API, and database. Tests are scoped to
+  confirm that all main components communicate correctly, not to duplicate unit or
+  integration test coverage. Provider-specific variants (e.g., separate Google and
+  Microsoft tests) are used only when provider-specific behavior needs explicit verification.
 
 _No critical clarification markers are required for this MVP specification._
 
@@ -178,12 +176,15 @@ _No critical clarification markers are required for this MVP specification._
   500 events into the Postgres Docker fixture and asserts P95 response time for
   `GET /api/events` is below 5 s.
 - **SC-004**: In provider outage simulations for one source, the unified calendar
-  continues to render events from remaining sources in 100% of test runs.
+  continues to render events from remaining sources in 100% of test runs. Verified
+  by an automated test that simulates one provider being unreachable and asserts the
+  other provider's cached events remain visible with a stale-data banner.
 - **SC-005**: Unit test coverage remains at 100% for frontend, backend, and shared
   code in CI.
-- **SC-006**: At least one end-to-end test per user story passes in CI, exercising the
-  full stack (frontend + backend + database) against each story's primary acceptance
-  scenario.
+- **SC-006**: At least one end-to-end test passes in CI, exercising the full stack
+  (frontend + backend + database), confirming all main components communicate correctly.
+  For this feature, separate provider tests (Google, Microsoft) are warranted to verify
+  provider-specific event display behavior end-to-end.
 
 ## Clarifications
 
@@ -222,8 +223,9 @@ _No critical clarification markers are required for this MVP specification._
 - **Testable Increments**: Each user story includes independent test criteria and MVP viability.
 - **Coverage Gate**: Coverage evidence demonstrates 100% unit coverage for all code,
   including frontend modules.
-- **End-to-End Test**: At least one end-to-end test per user story covers frontend,
-  backend, and database together (FR-018, SC-006).
+- **End-to-End Test**: At least one end-to-end test covering frontend, backend, and
+  database confirms system integration across all main components (FR-018, SC-006).
+  Provider-specific variants are used where provider behavior warrants explicit verification.
 - **Security and Privacy**: Sensitive data, permissions, and abuse-risk assumptions are explicit.
 - **Observability and Operability**: Success/failure signals for critical paths are identified.
 - **Simplicity and Compatibility**: Breaking changes, if any, are listed with impacted consumers.

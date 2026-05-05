@@ -3,7 +3,7 @@
 **Input**: Design documents from `.specify/features/002-unified-calendar-view/`
 **Prerequisites**: plan.md ✅, spec.md ✅, research.md ✅, data-model.md ✅, contracts/api-routes.md ✅, quickstart.md ✅
 
-**Tests**: Unit test tasks included per story to satisfy FR-014 (100% coverage). Integration test (T044) and performance benchmark (T045) added in Phase 6 to satisfy Constitution Principle IV and SC-003 respectively; both run against the Docker Postgres instance.
+**Tests**: Unit test tasks included per story to satisfy FR-014 (100% coverage). Integration tests (T044, T051) and performance benchmark (T045) added in Phase 6; T044 satisfies Constitution Principle IV, T051 satisfies SC-004 (automated provider outage simulation), T045 satisfies SC-003; all require Postgres running (`pnpm db`). Playwright end-to-end tests (T047, T048) added in Phase 6 to satisfy FR-018 and SC-006 — scoped to confirm all main system components communicate correctly. Two tests are used here (one per provider) because Google and Microsoft follow distinct fetch paths through the system; this is a justified provider-specific split, not a duplication of unit/integration coverage.
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
@@ -24,6 +24,7 @@
 - [X] T003 [P] Configure `apps/web/vitest.config.ts` — add `plugins: [react()]`, `environment: 'jsdom'`, `setupFiles: ['./src/test-setup.ts']`, coverage exclusions for `src/app/layout.tsx`, `src/app/page.tsx`, `src/app/(calendar)/page.tsx`
 - [X] T004 [P] Create `apps/web/src/test-setup.ts` — global jsdom / testing-library setup
 - [X] T005 [P] Create `apps/web/.env.local.example` with all required env var keys: `SESSION_PASSWORD`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI`, `MICROSOFT_CLIENT_ID`, `MICROSOFT_CLIENT_SECRET`, `MICROSOFT_REDIRECT_URI`, `DATABASE_URL`
+- [ ] T046 [P] Install Playwright and configure E2E test suite — add `@playwright/test` as dev dep in `apps/web/package.json`; create `apps/web/playwright.config.ts` targeting `http://localhost:3000`; create `apps/web/e2e/` directory with a shared `fixtures.ts` for OAuth network stub helpers and Postgres seed utilities (FR-018, SC-006)
 
 **Checkpoint**: Dependencies installed, tooling configured — foundational implementation can begin.
 
@@ -113,10 +114,14 @@
 - [X] T037 Security audit (implementation correctness) — verify in code: `oauth_state` cookie is `HttpOnly` and checked in both OAuth callbacks (CSRF); session cookie has `httpOnly: true`, `secure`, `sameSite: 'lax'`; `observability.ts` payloads contain no tokens/emails/titles; `cached_events` rows are `user_id`-scoped; no event descriptions/attachments cached (FR-011); record any discrepancy as a bug before T038
 - [X] T038 Run `pnpm lint` and `pnpm typecheck` across monorepo; resolve all errors
 - [X] T039 Run `pnpm test:coverage` for all packages; confirm 100% threshold passes in CI (FR-014, SC-005)
-- [X] T040 Validate quickstart.md flow end-to-end: `pnpm install` → `docker compose up -d` → configure `.env.local` → `pnpm dev` → connect Google → connect Microsoft → verify unified week-view renders → verify visibility toggles work
-- [X] T041 Capture constitution compliance evidence for PR description (reviewer documentation): trace FR-001–FR-017 and SC-001–SC-005 fulfillment; document the additive `UnifiedEvent` interface changes (`id`, `sourceProvider`, `sourceCalendarId`, `allDay`) as semver-minor additions to `packages/domain` with all internal callers updated in this feature (FR-013); confirm T037 security audit passed with no open bugs
-- [X] T044 Write integration test for `GET /api/events` against real Postgres (Docker) — create `apps/web/src/__tests__/integration/events.integration.test.ts`; connect to Docker Postgres via `DATABASE_URL` from `.env.test`; seed `cached_events` table with two provider snapshots (google + microsoft, 10 events each); inject a fixture `UserConnection[]` directly into the session helper (bypassing OAuth); call the `getOrFetchEvents` + `mergeProviderEvents` orchestration layer; assert response shape matches `contracts/api-routes.md` (event array, meta structure, `windowStart`/`windowEnd`, per-provider `fetchedAt`/`stale`); assert `206` is returned when one provider snapshot is stale; satisfies Constitution Principle IV integration/contract verification requirement
-- [X] T045 Write performance benchmark for `GET /api/events` — create `apps/web/src/__tests__/perf/events.bench.ts`; seed Postgres Docker fixture with 500 `UnifiedEvent` rows across both providers; call the `events.ts` orchestration layer 20 times, record per-call duration; assert P95 duration is below 5000 ms; fail test if threshold exceeded; satisfies SC-003
+- [X] T040 Validate quickstart.md flow end-to-end: `pnpm install` → `pnpm db` → configure `.env.local` → `pnpm dev` → connect Google → connect Microsoft → verify unified week-view renders → verify visibility toggles work
+- [X] T041 Capture constitution compliance evidence for PR description (reviewer documentation): trace FR-001–FR-018 and SC-001–SC-006 fulfillment; document the additive `UnifiedEvent` interface changes (`id`, `sourceProvider`, `sourceCalendarId`, `allDay`) as semver-minor additions to `packages/domain` with all internal callers updated in this feature (FR-013); confirm T037 security audit passed with no open bugs
+- [ ] T047 **[MANDATORY E2E]** Write Playwright E2E test for Google provider in `apps/web/e2e/calendar-google.spec.ts` — seed Postgres (run `pnpm db` first) with Google events; inject pre-authenticated Google session (OAuth stubbed); load the calendar page; assert Google events appear in the week-view with `sourceProvider: "google"` metadata (FR-018, SC-006)
+- [ ] T048 **[MANDATORY E2E]** Write Playwright E2E test for Microsoft provider in `apps/web/e2e/calendar-microsoft.spec.ts` — seed Postgres (run `pnpm db` first) with Microsoft events; inject pre-authenticated Microsoft session (OAuth stubbed); load the calendar page; assert Microsoft events appear in the week-view with `sourceProvider: "microsoft"` metadata (FR-018, SC-006)
+- [ ] T050 Run full Playwright E2E suite (`pnpm exec playwright test`) against Next.js dev server + Postgres; run `pnpm db` and `pnpm dev` first; confirm T047 and T048 pass; record evidence for SC-006
+- [X] T044 Write integration test for `GET /api/events` against real Postgres — create `apps/web/src/__tests__/integration/events.integration.test.ts`; ensure Postgres is running (`pnpm db`); connect via `DATABASE_URL` from `.env.test`; seed `cached_events` table with two provider snapshots (google + microsoft, 10 events each); inject a fixture `UserConnection[]` directly into the session helper (bypassing OAuth); call the `getOrFetchEvents` + `mergeProviderEvents` orchestration layer; assert response shape matches `contracts/api-routes.md` (event array, meta structure, `windowStart`/`windowEnd`, per-provider `fetchedAt`/`stale`); assert `206` is returned when one provider snapshot is stale; satisfies Constitution Principle IV integration/contract verification requirement
+- [ ] T051 Write provider outage simulation test — in `apps/web/src/__tests__/integration/events.integration.test.ts` (same file as T044), add a test case that seeds only one provider's snapshot in Postgres and forces the other provider's fetch to throw (mock `fetchGoogleEvents` or `fetchMicrosoftEvents` to reject); call `getOrFetchEvents` for both providers; assert the healthy provider's events are returned, the failing provider returns stale data with `stale: true`, and the response status is `206`; satisfies SC-004
+- [X] T045 Write performance benchmark for `GET /api/events` — create `apps/web/src/__tests__/perf/events.bench.ts`; ensure Postgres is running (`pnpm db`); seed fixture with 500 `UnifiedEvent` rows across both providers; call the `events.ts` orchestration layer 20 times, record per-call duration; assert P95 duration is below 5000 ms; fail test if threshold exceeded; satisfies SC-003
 
 ---
 
@@ -151,7 +156,9 @@
 - T009, T010, T011 — independent lib files (Phase 2)
 - T012, T013, T014, T015 — independent route files per provider (Phase 3)
 - T035, T036 — independent shared packages (Phase 6)
-- T044, T045 — independent integration/perf tests (Phase 6, both require Docker Postgres up)
+- T044, T045, T051 — independent integration/perf tests (Phase 6, require `pnpm db` first)
+- T047, T048 — E2E tests are independent of each other (different spec files, different providers); require `pnpm db` and `pnpm dev` running
+- T050 — depends on T047 and T048 passing; requires `pnpm db` and `pnpm dev`
 
 ---
 

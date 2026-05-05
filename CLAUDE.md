@@ -22,7 +22,7 @@ infra/docker/          # docker-compose.yml (Postgres 16)
 
 ```bash
 pnpm install
-docker compose -f infra/docker/docker-compose.yml up -d
+pnpm db           # ensure Postgres is running (starts Docker container if needed)
 pnpm dev          # start Next.js dev server
 pnpm test         # run all tests
 pnpm test:coverage # run with 100% coverage enforcement

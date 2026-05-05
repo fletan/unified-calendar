@@ -88,8 +88,6 @@ Examples of foundational tasks (adjust based on your project):
 
 - [ ] T014 [P] [US1] Contract test for [endpoint] in tests/contract/test\_[name].py
 - [ ] T015 [P] [US1] Integration test for [user journey] in tests/integration/test\_[name].py
-- [ ] T015b [US1] **[MANDATORY E2E]** End-to-end test covering frontend + backend + database
-  for primary acceptance scenario in tests/e2e/test\_[feature].py
 
 ### Implementation for User Story 1
 
@@ -101,10 +99,8 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] T021 [US1] Add structured logging/metrics for user story 1 operations
 - [ ] T022 [US1] Verify security/privacy controls for user story 1 data flows
 - [ ] T023 [US1] Achieve and verify 100% unit coverage for impacted frontend/backend modules
-- [ ] T023b [US1] Verify end-to-end test (T015b) passes against live frontend + backend + database
 
-**Checkpoint**: At this point, User Story 1 should be fully functional and testable independently,
-with passing end-to-end test evidence
+**Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 
 ---
 
@@ -118,8 +114,6 @@ with passing end-to-end test evidence
 
 - [ ] T024 [P] [US2] Contract test for [endpoint] in tests/contract/test\_[name].py
 - [ ] T025 [P] [US2] Integration test for [user journey] in tests/integration/test\_[name].py
-- [ ] T025b [US2] **[MANDATORY E2E]** End-to-end test covering frontend + backend + database
-  for user story 2 primary acceptance scenario in tests/e2e/test\_[feature]\_us2.py
 
 ### Implementation for User Story 2
 
@@ -129,10 +123,8 @@ with passing end-to-end test evidence
 - [ ] T029 [US2] Integrate with User Story 1 components (if needed)
 - [ ] T030 [US2] Verify observability and security controls for user story 2
 - [ ] T031 [US2] Achieve and verify 100% unit coverage for impacted frontend/backend modules
-- [ ] T031b [US2] Verify end-to-end test (T025b) passes against live frontend + backend + database
 
-**Checkpoint**: At this point, User Stories 1 AND 2 should both work independently,
-each with passing end-to-end test evidence
+**Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
 
 ---
 
@@ -146,8 +138,6 @@ each with passing end-to-end test evidence
 
 - [ ] T032 [P] [US3] Contract test for [endpoint] in tests/contract/test\_[name].py
 - [ ] T033 [P] [US3] Integration test for [user journey] in tests/integration/test\_[name].py
-- [ ] T033b [US3] **[MANDATORY E2E]** End-to-end test covering frontend + backend + database
-  for user story 3 primary acceptance scenario in tests/e2e/test\_[feature]\_us3.py
 
 ### Implementation for User Story 3
 
@@ -156,10 +146,8 @@ each with passing end-to-end test evidence
 - [ ] T036 [US3] Implement [endpoint/feature] in src/[location]/[file].py
 - [ ] T037 [US3] Validate compatibility impacts and migration notes (if interfaces changed)
 - [ ] T038 [US3] Achieve and verify 100% unit coverage for impacted frontend/backend modules
-- [ ] T038b [US3] Verify end-to-end test (T033b) passes against live frontend + backend + database
 
-**Checkpoint**: All user stories should now be independently functional,
-each with passing end-to-end test evidence
+**Checkpoint**: All user stories should now be independently functional
 
 ---
 
@@ -179,7 +167,10 @@ each with passing end-to-end test evidence
 - [ ] TXXX Run quickstart.md validation
 - [ ] TXXX Constitution compliance review and evidence capture for PR
 - [ ] TXXX Final coverage audit confirms 100% unit coverage in CI (including frontend)
-- [ ] TXXX Confirm all per-story end-to-end tests pass in CI against full stack
+- [ ] TXXX **[MANDATORY E2E]** Write at least one end-to-end test for the feature in
+  tests/e2e/; scope tests to confirm all main components of the system work and
+  communicate correctly (frontend → backend → database); do not duplicate what unit or
+  integration tests already cover; run against full stack; confirm all pass in CI (FR-012, SC-006)
 
 ---
 

@@ -46,13 +46,18 @@ Unit test coverage MUST be 100% for all production code paths, including fronten
 backend, and shared modules. Any pull request below 100% unit coverage MUST NOT be
 merged.
 
-Every feature MUST include at least one end-to-end test that exercises the complete system:
-frontend, backend API, and database. End-to-end tests MUST cover the primary happy-path
-acceptance scenario for each feature's most critical user story. A feature MUST NOT be
-considered done without passing end-to-end test evidence.
+Every feature MUST include at least one end-to-end test that exercises the complete
+system: frontend, backend API, and database. The number and scope of E2E tests are chosen
+during implementation with one goal: confirm that all main components of the system work
+and communicate well with each other. E2E tests MUST NOT duplicate what unit and
+integration tests already verify — they exist to catch integration failures between layers, not
+to re-test individual logic. A feature MUST NOT be considered done without passing E2E
+test evidence.
 
-Rationale: unit tests verify isolated logic; end-to-end tests are the only reliable signal that
-the integrated system delivers the intended user experience. Both layers are mandatory.
+Rationale: unit tests verify isolated logic; integration tests verify boundaries; end-to-end
+tests are the only reliable signal that the full system delivers the intended user experience.
+Keeping E2E tests focused on system integration (rather than provider-specific or
+story-specific variants) keeps the suite maintainable as the codebase evolves.
 
 ### III. Security and Privacy by Default
 
@@ -103,8 +108,9 @@ protects downstream users.
    compatibility impact, and operational readiness.
 6. CI and local verification MUST show 100% unit test coverage, including frontend code,
    before merge.
-7. At least one end-to-end test MUST pass for the feature's primary user story, exercising
-   frontend, backend, and database together, before merge.
+7. At least one end-to-end test MUST pass for the feature, exercising frontend, backend,
+   and database together, before merge. Tests are scoped to confirm system integration,
+   not to duplicate unit or integration test coverage.
 
 ## Governance
 
@@ -130,4 +136,4 @@ Compliance review expectations:
 - Violations MUST be resolved before merge or recorded as a temporary exception with
   owner, expiry date, and follow-up issue.
 
-**Version**: 1.2.0 | **Ratified**: 2026-03-26 | **Last Amended**: 2026-05-05
+**Version**: 1.2.2 | **Ratified**: 2026-03-26 | **Last Amended**: 2026-05-05
