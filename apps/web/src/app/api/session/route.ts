@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import { getSessionConnections } from "@/lib/session";
+import { NextResponse } from "next/server";
 
 export async function GET(): Promise<NextResponse> {
   const connections = await getSessionConnections();

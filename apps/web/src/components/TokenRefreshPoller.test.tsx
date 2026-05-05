@@ -1,5 +1,5 @@
-import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { render } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { TokenRefreshPoller } from "./TokenRefreshPoller";
 
 const mockPush = vi.fn();
@@ -25,9 +25,11 @@ describe("TokenRefreshPoller", () => {
   });
 
   it("calls /api/auth/refresh after 4 minutes", async () => {
-    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response(JSON.stringify({ refreshed: [] }), { status: 200 }),
-    );
+    const fetchSpy = vi
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValue(
+        new Response(JSON.stringify({ refreshed: [] }), { status: 200 }),
+      );
 
     render(<TokenRefreshPoller />);
     await vi.advanceTimersByTimeAsync(4 * 60 * 1000);
@@ -37,7 +39,9 @@ describe("TokenRefreshPoller", () => {
 
   it("redirects to / on 401 response", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response(JSON.stringify({ reason: "refresh_failed" }), { status: 401 }),
+      new Response(JSON.stringify({ reason: "refresh_failed" }), {
+        status: 401,
+      }),
     );
 
     render(<TokenRefreshPoller />);

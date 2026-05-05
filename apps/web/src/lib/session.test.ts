@@ -1,9 +1,9 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
 import type { UserConnection } from "@unified-calendar/domain";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   getSessionConnections,
-  setSessionConnection,
   removeSessionConnection,
+  setSessionConnection,
 } from "./session";
 
 interface MockSession {
@@ -36,6 +36,12 @@ describe("session helpers", () => {
   });
 
   describe("getSessionConnections", () => {
+    it("returns empty array when connections is undefined", async () => {
+      // biome-ignore lint/suspicious/noExplicitAny: testing undefined path
+      (sessionStore as any).connections = undefined;
+      expect(await getSessionConnections()).toEqual([]);
+    });
+
     it("returns empty array when no connections", async () => {
       expect(await getSessionConnections()).toEqual([]);
     });
@@ -49,6 +55,13 @@ describe("session helpers", () => {
   });
 
   describe("setSessionConnection", () => {
+    it("adds a connection when session.connections is undefined", async () => {
+      // biome-ignore lint/suspicious/noExplicitAny: testing undefined path
+      (sessionStore as any).connections = undefined;
+      await setSessionConnection(baseConn);
+      expect(sessionStore.connections).toHaveLength(1);
+    });
+
     it("adds a new connection", async () => {
       await setSessionConnection(baseConn);
       expect(sessionStore.connections).toHaveLength(1);
@@ -89,6 +102,13 @@ describe("session helpers", () => {
 
     it("handles empty session gracefully", async () => {
       await expect(removeSessionConnection("google")).resolves.toBeUndefined();
+    });
+
+    it("handles undefined connections gracefully", async () => {
+      // biome-ignore lint/suspicious/noExplicitAny: testing undefined path
+      (sessionStore as any).connections = undefined;
+      await expect(removeSessionConnection("google")).resolves.toBeUndefined();
+      expect(sessionStore.connections).toHaveLength(0);
     });
   });
 });

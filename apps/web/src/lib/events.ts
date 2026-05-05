@@ -1,7 +1,12 @@
-import type { Provider, SyncSnapshot, UnifiedEvent, UserConnection } from "@unified-calendar/domain";
+import type {
+  Provider,
+  SyncSnapshot,
+  UnifiedEvent,
+  UserConnection,
+} from "@unified-calendar/domain";
 import { fetchGoogleEvents } from "@unified-calendar/providers-google";
 import { fetchMicrosoftEvents } from "@unified-calendar/providers-microsoft";
-import { sql, USER_ID } from "./db";
+import { USER_ID, sql } from "./db";
 
 const STALE_MINUTES = 5;
 const WINDOW_PAST_DAYS = 30;
@@ -66,7 +71,7 @@ export async function upsertSnapshot(snapshot: SyncSnapshot): Promise<void> {
     VALUES (
       ${snapshot.userId},
       ${snapshot.provider},
-      ${JSON.stringify(snapshot.events)},
+      ${sql.json(snapshot.events as unknown as import("postgres").JSONValue)},
       ${snapshot.fetchedAt},
       ${snapshot.windowStart},
       ${snapshot.windowEnd}

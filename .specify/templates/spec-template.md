@@ -97,6 +97,10 @@
   including frontend, backend, and shared modules.
 - **FR-011**: System MUST define coverage tooling, thresholds, and CI enforcement for
   unit coverage verification.
+- **FR-012**: System MUST include at least one end-to-end test per feature that exercises
+  the full stack: frontend, backend API, and database together. The number and scope of
+  E2E tests are chosen during implementation to confirm that all main components
+  communicate correctly — not to duplicate unit or integration test coverage.
 
 _Example of marking unclear requirements:_
 
@@ -123,6 +127,9 @@ _Example of marking unclear requirements:_
 - **SC-004**: [Business metric, e.g., "Reduce support tickets related to [X] by 50%"]
 - **SC-005**: Unit test coverage remains at 100% for frontend, backend, and shared
   code in CI.
+- **SC-006**: At least one end-to-end test passes in CI, exercising the full stack
+  (frontend + backend + database), confirming system integration across all main
+  components without duplicating unit or integration test coverage.
 
 ## Assumptions
 
@@ -143,6 +150,9 @@ _Example of marking unclear requirements:_
 - **Testable Increments**: Each user story includes independent test criteria and MVP viability.
 - **Coverage Gate**: Coverage evidence demonstrates 100% unit coverage for all code,
   including frontend modules.
+- **End-to-End Test**: At least one end-to-end test covering frontend, backend, and
+  database is identified, scoped to confirm system integration rather than duplicate unit
+  or integration test coverage.
 - **Security and Privacy**: Sensitive data, permissions, and abuse-risk assumptions are explicit.
 - **Observability and Operability**: Success/failure signals for critical paths are identified.
 - **Simplicity and Compatibility**: Breaking changes, if any, are listed with impacted consumers.

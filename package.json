@@ -2,9 +2,10 @@
     "name": "@unified-calendar/workspace",
     "private": true,
     "version": "0.1.0",
-    "packageManager": "pnpm@10.6.2",
+    "packageManager": "pnpm@10.33.0",
     "scripts": {
         "build": "turbo run build",
+        "db": "bash scripts/ensure-db.sh",
         "dev": "turbo run dev --parallel",
         "clean:cache": "turbo run clean:cache && rm -rf .turbo",
         "clean:artifacts": "turbo run clean:artifacts && rm -rf .turbo",

@@ -1,6 +1,6 @@
-import { describe, expect, it, vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import type { CalendarSource } from "@unified-calendar/domain";
+import { describe, expect, it, vi } from "vitest";
 import { CalendarSidebar } from "./CalendarSidebar";
 
 const mockToggle = vi.fn();
@@ -8,8 +8,18 @@ const mockToggle = vi.fn();
 vi.mock("./CalendarContext", () => ({
   useCalendarContext: vi.fn(() => ({
     calendarSources: [
-      { provider: "google", calendarId: "primary", name: "Google Cal", visible: true },
-      { provider: "microsoft", calendarId: "primary", name: "MS Cal", visible: false },
+      {
+        provider: "google",
+        calendarId: "primary",
+        name: "Google Cal",
+        visible: true,
+      },
+      {
+        provider: "microsoft",
+        calendarId: "primary",
+        name: "MS Cal",
+        visible: false,
+      },
     ] as CalendarSource[],
     toggleVisibility: mockToggle,
   })),

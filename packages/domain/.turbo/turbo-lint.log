@@ -1,0 +1,5 @@
+
+> @unified-calendar/domain@0.1.0 lint /Users/igiguere/projects/__perso/unified-calendar/packages/domain
+> biome check src
+
+Checked 2 files in 1943µs. No fixes applied.

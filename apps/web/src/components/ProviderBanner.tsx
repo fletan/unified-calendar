@@ -15,13 +15,13 @@ export function ProviderBanner({ providers }: ProviderBannerProps) {
   const staleProviders = providers.filter((p) => p.stale);
   if (staleProviders.length === 0) return null;
   return (
-    <div role="status">
+    <output>
       {staleProviders.map(({ provider }) => (
         <div key={provider}>
           {provider === "google" ? "Google" : "Microsoft"} calendar data may be
           outdated.
         </div>
       ))}
-    </div>
+    </output>
   );
 }

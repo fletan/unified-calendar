@@ -1,0 +1,22 @@
+
+> @unified-calendar/domain@0.1.0 test:coverage /Users/igiguere/projects/__perso/unified-calendar/packages/domain
+> vitest run --coverage
+
+
+ RUN  v2.1.9 /Users/igiguere/projects/__perso/unified-calendar/packages/domain
+      Coverage enabled with v8
+
+ ✓ src/index.test.ts (2 tests) 1ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  19:04:10
+   Duration  278ms (transform 19ms, setup 0ms, collect 14ms, tests 1ms, environment 0ms, prepare 57ms)
+
+ % Coverage report from v8
+----------|---------|----------|---------|---------|-------------------
+File      | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+----------|---------|----------|---------|---------|-------------------
+All files |     100 |      100 |     100 |     100 |                   
+ index.ts |     100 |      100 |     100 |     100 |                   
+----------|---------|----------|---------|---------|-------------------

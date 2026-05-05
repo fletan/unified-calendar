@@ -1,0 +1,137 @@
+
+> @unified-calendar/config-typescript@0.1.0 lint /Users/igiguere/projects/__perso/unified-calendar/packages/config-typescript
+> biome check package.json base.json nextjs.json
+
+package.json format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+     1  1 │   {
+     2    │ - ····"name":·"@unified-calendar/config-typescript",
+     3    │ - ····"version":·"0.1.0",
+     4    │ - ····"private":·true,
+     5    │ - ····"scripts":·{
+     6    │ - ········"build":·"rm·-rf·dist·&&·mkdir·-p·dist·&&·cp·base.json·nextjs.json·dist/",
+     7    │ - ········"clean:artifacts":·"rm·-rf·dist·.turbo",
+     8    │ - ········"clean":·"pnpm·run·clean:artifacts",
+     9    │ - ········"clean:cache":·"rm·-rf·.turbo",
+    10    │ - ········"lint":·"biome·check·package.json·base.json·nextjs.json",
+    11    │ - ········"typecheck":·"echo·\"No·typecheck·needed·for·@unified-calendar/config-typescript\"",
+    12    │ - ········"test":·"echo·\"No·tests·needed·for·@unified-calendar/config-typescript\"",
+    13    │ - ········"test:coverage":·"echo·\"No·coverage·needed·for·@unified-calendar/config-typescript\""
+    14    │ - ····},
+    15    │ - ····"files":·[
+    16    │ - ········"base.json",
+    17    │ - ········"nextjs.json"
+    18    │ - ····],
+    19    │ - ····"exports":·{
+    20    │ - ········"./base.json":·"./base.json",
+    21    │ - ········"./nextjs.json":·"./nextjs.json"
+    22    │ - ····}
+        2 │ + ··"name":·"@unified-calendar/config-typescript",
+        3 │ + ··"version":·"0.1.0",
+        4 │ + ··"private":·true,
+        5 │ + ··"scripts":·{
+        6 │ + ····"build":·"rm·-rf·dist·&&·mkdir·-p·dist·&&·cp·base.json·nextjs.json·dist/",
+        7 │ + ····"clean:artifacts":·"rm·-rf·dist·.turbo",
+        8 │ + ····"clean":·"pnpm·run·clean:artifacts",
+        9 │ + ····"clean:cache":·"rm·-rf·.turbo",
+       10 │ + ····"lint":·"biome·check·package.json·base.json·nextjs.json",
+       11 │ + ····"typecheck":·"echo·\"No·typecheck·needed·for·@unified-calendar/config-typescript\"",
+       12 │ + ····"test":·"echo·\"No·tests·needed·for·@unified-calendar/config-typescript\"",
+       13 │ + ····"test:coverage":·"echo·\"No·coverage·needed·for·@unified-calendar/config-typescript\""
+       14 │ + ··},
+       15 │ + ··"files":·["base.json",·"nextjs.json"],
+       16 │ + ··"exports":·{
+       17 │ + ····"./base.json":·"./base.json",
+       18 │ + ····"./nextjs.json":·"./nextjs.json"
+       19 │ + ··}
+    23 20 │   }
+    24 21 │   
+  
+
+nextjs.json format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+     1  1 │   {
+     2    │ - ····"$schema":·"https://json.schemastore.org/tsconfig",
+     3    │ - ····"extends":·"./base.json",
+     4    │ - ····"compilerOptions":·{
+     5    │ - ········"jsx":·"preserve",
+     6    │ - ········"lib":·[
+     7    │ - ············"DOM",
+     8    │ - ············"DOM.Iterable",
+     9    │ - ············"ES2022"
+    10    │ - ········],
+    11    │ - ········"allowJs":·false,
+    12    │ - ········"incremental":·true,
+    13    │ - ········"isolatedModules":·true,
+    14    │ - ········"noEmit":·true,
+    15    │ - ········"plugins":·[
+    16    │ - ············{
+    17    │ - ················"name":·"next"
+    18    │ - ············}
+    19    │ - ········]
+    20    │ - ····}
+        2 │ + ··"$schema":·"https://json.schemastore.org/tsconfig",
+        3 │ + ··"extends":·"./base.json",
+        4 │ + ··"compilerOptions":·{
+        5 │ + ····"jsx":·"preserve",
+        6 │ + ····"lib":·["DOM",·"DOM.Iterable",·"ES2022"],
+        7 │ + ····"allowJs":·false,
+        8 │ + ····"incremental":·true,
+        9 │ + ····"isolatedModules":·true,
+       10 │ + ····"noEmit":·true,
+       11 │ + ····"plugins":·[
+       12 │ + ······{
+       13 │ + ········"name":·"next"
+       14 │ + ······}
+       15 │ + ····]
+       16 │ + ··}
+    21 17 │   }
+    22 18 │   
+  
+
+base.json format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Formatter would have printed the following content:
+  
+     1  1 │   {
+     2    │ - ····"$schema":·"https://json.schemastore.org/tsconfig",
+     3    │ - ····"compilerOptions":·{
+     4    │ - ········"target":·"ES2022",
+     5    │ - ········"module":·"ESNext",
+     6    │ - ········"moduleResolution":·"Bundler",
+     7    │ - ········"strict":·true,
+     8    │ - ········"noUncheckedIndexedAccess":·true,
+     9    │ - ········"resolveJsonModule":·true,
+    10    │ - ········"esModuleInterop":·true,
+    11    │ - ········"skipLibCheck":·true,
+    12    │ - ········"forceConsistentCasingInFileNames":·true
+    13    │ - ····}
+        2 │ + ··"$schema":·"https://json.schemastore.org/tsconfig",
+        3 │ + ··"compilerOptions":·{
+        4 │ + ····"target":·"ES2022",
+        5 │ + ····"module":·"ESNext",
+        6 │ + ····"moduleResolution":·"Bundler",
+        7 │ + ····"strict":·true,
+        8 │ + ····"noUncheckedIndexedAccess":·true,
+        9 │ + ····"resolveJsonModule":·true,
+       10 │ + ····"esModuleInterop":·true,
+       11 │ + ····"skipLibCheck":·true,
+       12 │ + ····"forceConsistentCasingInFileNames":·true
+       13 │ + ··}
+    14 14 │   }
+    15 15 │   
+  
+
+Checked 3 files in 1108µs. No fixes applied.
+Found 3 errors.
+check ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  × Some errors were emitted while running checks.
+  
+
+ ELIFECYCLE  Command failed with exit code 1.
+ WARN   Local package.json exists, but node_modules missing, did you mean to install?

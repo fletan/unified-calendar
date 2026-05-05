@@ -12,7 +12,8 @@
         },
         "dev": {
             "cache": false,
-            "persistent": true
+            "persistent": true,
+            "passThroughEnv": ["NODE_EXTRA_CA_CERTS"]
         },
         "clean": {
             "cache": false

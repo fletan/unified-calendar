@@ -2,3 +2,6 @@ node_modules
 .next
 coverage
 dist
+apps/web/tsconfig.tsbuildinfo
+apps/web/.env.local
+apps/.DS_Store

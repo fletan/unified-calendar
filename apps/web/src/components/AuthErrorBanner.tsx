@@ -18,7 +18,8 @@ export function AuthErrorBanner({ failures }: AuthErrorBannerProps) {
       {failures.map(({ provider, retryHref }) => (
         <div key={provider}>
           <span>
-            Failed to connect to {provider === "google" ? "Google" : "Microsoft"}.
+            Failed to connect to{" "}
+            {provider === "google" ? "Google" : "Microsoft"}.
           </span>
           <a href={retryHref}>Retry</a>
         </div>

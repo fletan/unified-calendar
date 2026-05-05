@@ -1,8 +1,8 @@
-import { google } from "googleapis";
-import { NextRequest, NextResponse } from "next/server";
 import { verifyStateCookie } from "@/lib/auth";
-import { setSessionConnection } from "@/lib/session";
 import { logAuthEvent } from "@/lib/observability";
+import { setSessionConnection } from "@/lib/session";
+import { google } from "googleapis";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const { searchParams } = req.nextUrl;
@@ -50,6 +50,9 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     return NextResponse.redirect(new URL("/", req.url));
   } catch {
     logAuthEvent("google", "failure", "token_exchange_failed");
-    return NextResponse.json({ error: "Provider unreachable" }, { status: 502 });
+    return NextResponse.json(
+      { error: "Provider unreachable" },
+      { status: 502 },
+    );
   }
 }

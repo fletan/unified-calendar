@@ -1,13 +1,13 @@
 "use client";
 
+import type { CalendarSource, Provider } from "@unified-calendar/domain";
 import {
+  type ReactNode,
   createContext,
   useCallback,
   useContext,
   useState,
-  type ReactNode,
 } from "react";
-import type { CalendarSource, Provider } from "@unified-calendar/domain";
 
 interface CalendarContextValue {
   calendarSources: CalendarSource[];
@@ -52,7 +52,9 @@ export function CalendarContextProvider({
 export function useCalendarContext(): CalendarContextValue {
   const ctx = useContext(CalendarContext);
   if (!ctx) {
-    throw new Error("useCalendarContext must be used inside CalendarContextProvider");
+    throw new Error(
+      "useCalendarContext must be used inside CalendarContextProvider",
+    );
   }
   return ctx;
 }

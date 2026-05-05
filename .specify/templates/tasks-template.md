@@ -82,7 +82,7 @@ Examples of foundational tasks (adjust based on your project):
 
 **Independent Test**: [How to verify this story works on its own]
 
-### Tests for User Story 1 (OPTIONAL - only if tests requested) ⚠️
+### Tests for User Story 1
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
@@ -110,7 +110,7 @@ Examples of foundational tasks (adjust based on your project):
 
 **Independent Test**: [How to verify this story works on its own]
 
-### Tests for User Story 2 (OPTIONAL - only if tests requested) ⚠️
+### Tests for User Story 2
 
 - [ ] T024 [P] [US2] Contract test for [endpoint] in tests/contract/test\_[name].py
 - [ ] T025 [P] [US2] Integration test for [user journey] in tests/integration/test\_[name].py
@@ -134,7 +134,7 @@ Examples of foundational tasks (adjust based on your project):
 
 **Independent Test**: [How to verify this story works on its own]
 
-### Tests for User Story 3 (OPTIONAL - only if tests requested) ⚠️
+### Tests for User Story 3
 
 - [ ] T032 [P] [US3] Contract test for [endpoint] in tests/contract/test\_[name].py
 - [ ] T033 [P] [US3] Integration test for [user journey] in tests/integration/test\_[name].py
@@ -167,6 +167,10 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] TXXX Run quickstart.md validation
 - [ ] TXXX Constitution compliance review and evidence capture for PR
 - [ ] TXXX Final coverage audit confirms 100% unit coverage in CI (including frontend)
+- [ ] TXXX **[MANDATORY E2E]** Write at least one end-to-end test for the feature in
+  tests/e2e/; scope tests to confirm all main components of the system work and
+  communicate correctly (frontend → backend → database); do not duplicate what unit or
+  integration tests already cover; run against full stack; confirm all pass in CI (FR-012, SC-006)
 
 ---
 

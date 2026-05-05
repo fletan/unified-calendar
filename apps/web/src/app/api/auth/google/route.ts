@@ -1,7 +1,7 @@
-import { google } from "googleapis";
-import { NextResponse } from "next/server";
 import { generateState, setStateCookie } from "@/lib/auth";
 import { logAuthEvent } from "@/lib/observability";
+import { google } from "googleapis";
+import { NextResponse } from "next/server";
 
 export async function GET(): Promise<NextResponse> {
   const clientId = process.env.GOOGLE_CLIENT_ID;
@@ -9,7 +9,10 @@ export async function GET(): Promise<NextResponse> {
 
   if (!clientId || !redirectUri) {
     logAuthEvent("google", "failure", "missing_env");
-    return NextResponse.json({ error: "Server misconfiguration" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Server misconfiguration" },
+      { status: 500 },
+    );
   }
 
   const oauth2Client = new google.auth.OAuth2(
@@ -24,7 +27,12 @@ export async function GET(): Promise<NextResponse> {
   const url = oauth2Client.generateAuthUrl({
     access_type: "offline",
     prompt: "consent",
-    scope: ["https://www.googleapis.com/auth/calendar.readonly", "openid", "profile", "email"],
+    scope: [
+      "https://www.googleapis.com/auth/calendar.readonly",
+      "openid",
+      "profile",
+      "email",
+    ],
     state,
   });
 
