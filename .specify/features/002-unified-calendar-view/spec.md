@@ -147,6 +147,9 @@ then verifying the corresponding events disappear and reappear in the same unifi
   including frontend, backend, and shared modules.
 - **FR-015**: System MUST define coverage tooling, thresholds, and CI enforcement for
   unit coverage verification.
+- **FR-018**: System MUST include at least one end-to-end test per user story that
+  exercises the complete stack — frontend, backend API, and database — against the
+  primary acceptance scenario for that story.
 
 _No critical clarification markers are required for this MVP specification._
 
@@ -178,6 +181,9 @@ _No critical clarification markers are required for this MVP specification._
   continues to render events from remaining sources in 100% of test runs.
 - **SC-005**: Unit test coverage remains at 100% for frontend, backend, and shared
   code in CI.
+- **SC-006**: At least one end-to-end test per user story passes in CI, exercising the
+  full stack (frontend + backend + database) against each story's primary acceptance
+  scenario.
 
 ## Clarifications
 
@@ -216,6 +222,8 @@ _No critical clarification markers are required for this MVP specification._
 - **Testable Increments**: Each user story includes independent test criteria and MVP viability.
 - **Coverage Gate**: Coverage evidence demonstrates 100% unit coverage for all code,
   including frontend modules.
+- **End-to-End Test**: At least one end-to-end test per user story covers frontend,
+  backend, and database together (FR-018, SC-006).
 - **Security and Privacy**: Sensitive data, permissions, and abuse-risk assumptions are explicit.
 - **Observability and Operability**: Success/failure signals for critical paths are identified.
 - **Simplicity and Compatibility**: Breaking changes, if any, are listed with impacted consumers.
