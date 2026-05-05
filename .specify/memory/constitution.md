@@ -1,23 +1,24 @@
 <!--
 Sync Impact Report
-- Version change: 1.0.0 -> 1.1.0
+- Version change: 1.1.0 -> 1.2.0
 - Modified principles:
-	- II. Testable Increments (NON-NEGOTIABLE) -> II. Testable Increments and Coverage Gate (NON-NEGOTIABLE)
+  - II. Testable Increments and Coverage Gate (NON-NEGOTIABLE) — expanded to include
+    mandatory end-to-end test requirement per feature
 - Added sections:
-	- None
+  - None
 - Removed sections:
-	- None
+  - None
 - Templates requiring updates:
-	- ✅ updated: .specify/templates/plan-template.md
-	- ✅ updated: .specify/templates/spec-template.md
-	- ✅ updated: .specify/templates/tasks-template.md
-	- ⚠ pending: .specify/templates/commands/*.md (directory not present; no files to update)
+  - ✅ updated: .specify/templates/plan-template.md
+  - ✅ updated: .specify/templates/spec-template.md
+  - ✅ updated: .specify/templates/tasks-template.md
+  - ⚠ pending: .specify/templates/commands/*.md (directory not present; no files to update)
 - Runtime guidance review:
-	- ✅ checked: .github/agents/*.agent.md (no constitution-specific stale references found)
-	- ⚠ pending: README.md (file not present)
-	- ⚠ pending: docs/quickstart.md (file not present)
+  - ✅ checked: .github/agents/*.agent.md (no stale references found)
+  - ⚠ pending: README.md (file not present)
+  - ⚠ pending: docs/quickstart.md (file not present)
 - Follow-up TODOs:
-	- None
+  - None
 -->
 
 # Unified Calendar Constitution
@@ -40,12 +41,18 @@ Each user story MUST be independently implementable and independently verifiable
 every story, tests MUST be created for the expected behavior and MUST fail before
 implementation when tests are part of scope. A change MUST NOT be considered complete
 unless story-level acceptance scenarios and regression checks pass.
+
 Unit test coverage MUST be 100% for all production code paths, including frontend,
 backend, and shared modules. Any pull request below 100% unit coverage MUST NOT be
 merged.
 
-Rationale: independent, testable increments preserve delivery velocity and reduce regression
-risk.
+Every feature MUST include at least one end-to-end test that exercises the complete system:
+frontend, backend API, and database. End-to-end tests MUST cover the primary happy-path
+acceptance scenario for each feature's most critical user story. A feature MUST NOT be
+considered done without passing end-to-end test evidence.
+
+Rationale: unit tests verify isolated logic; end-to-end tests are the only reliable signal that
+the integrated system delivers the intended user experience. Both layers are mandatory.
 
 ### III. Security and Privacy by Default
 
@@ -96,6 +103,8 @@ protects downstream users.
    compatibility impact, and operational readiness.
 6. CI and local verification MUST show 100% unit test coverage, including frontend code,
    before merge.
+7. At least one end-to-end test MUST pass for the feature's primary user story, exercising
+   frontend, backend, and database together, before merge.
 
 ## Governance
 
@@ -121,4 +130,4 @@ Compliance review expectations:
 - Violations MUST be resolved before merge or recorded as a temporary exception with
   owner, expiry date, and follow-up issue.
 
-**Version**: 1.1.0 | **Ratified**: 2026-03-26 | **Last Amended**: 2026-03-26
+**Version**: 1.2.0 | **Ratified**: 2026-03-26 | **Last Amended**: 2026-05-05

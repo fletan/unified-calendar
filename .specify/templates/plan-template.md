@@ -37,6 +37,8 @@ _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
   independently verifiable; required test approach is defined.
 - **Coverage Gate**: Plan defines how 100% unit test coverage is measured and
   enforced for frontend, backend, and shared code.
+- **End-to-End Test**: Plan identifies at least one end-to-end test scenario covering
+  frontend, backend, and database for the feature's primary user story.
 - **Security and Privacy**: Data sensitivity, secret handling, and misuse/threat
   considerations are documented for impacted flows.
 - **Observability and Operability**: Monitoring signals, diagnostics, and failure

@@ -97,6 +97,8 @@
   including frontend, backend, and shared modules.
 - **FR-011**: System MUST define coverage tooling, thresholds, and CI enforcement for
   unit coverage verification.
+- **FR-012**: System MUST include at least one end-to-end test per feature that exercises
+  the full stack: frontend, backend API, and database together.
 
 _Example of marking unclear requirements:_
 
@@ -123,6 +125,8 @@ _Example of marking unclear requirements:_
 - **SC-004**: [Business metric, e.g., "Reduce support tickets related to [X] by 50%"]
 - **SC-005**: Unit test coverage remains at 100% for frontend, backend, and shared
   code in CI.
+- **SC-006**: At least one end-to-end test passes in CI, exercising the full stack
+  (frontend + backend + database) for the feature's primary user story.
 
 ## Assumptions
 
@@ -143,6 +147,8 @@ _Example of marking unclear requirements:_
 - **Testable Increments**: Each user story includes independent test criteria and MVP viability.
 - **Coverage Gate**: Coverage evidence demonstrates 100% unit coverage for all code,
   including frontend modules.
+- **End-to-End Test**: At least one end-to-end test covering frontend, backend, and
+  database is identified for the feature's primary user story.
 - **Security and Privacy**: Sensitive data, permissions, and abuse-risk assumptions are explicit.
 - **Observability and Operability**: Success/failure signals for critical paths are identified.
 - **Simplicity and Compatibility**: Breaking changes, if any, are listed with impacted consumers.
